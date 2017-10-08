@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -47,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private TextView mTextViewForgotPwd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mTextViewForgotPwd = (TextView) findViewById(R.id.textForgotPwd);
+        mLoginFormView = findViewById(R.id.login_form);
+        mProgressView = findViewById(R.id.login_progress);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -75,8 +80,39 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mTextViewForgotPwd.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog.Builder pwdDialog = new AlertDialog.Builder(LoginActivity.this);
+                View dialodView = getLayoutInflater().inflate(R.layout.dialog_forgotpwd, null);
+                pwdDialog.setView(dialodView);
+                pwdDialog.setCancelable(false);
+                final AlertDialog alertDialog = pwdDialog.create();
+                alertDialog.show();
+                EditText mEditTextSchoolName = (EditText) dialodView.findViewById(R.id.schoolName);
+                EditText mEditTextUserName = (EditText)dialodView.findViewById(R.id.userName);
+                Button mButtonContinue = (Button)dialodView.findViewById(R.id.btn_send);
+                Button mButtonCancel = (Button) dialodView.findViewById(R.id.btn_cancel);
+
+                mButtonContinue.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(LoginActivity.this,"Button continue", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                });
+
+                mButtonCancel.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(LoginActivity.this,"Button cancel", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                });
+
+            }
+        });
+
     }
 
 
@@ -103,6 +139,7 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 */
+
     /**
      * Callback received when a permissions request has been completed.
      */
@@ -258,7 +295,7 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-                Toast.makeText(LoginActivity.this,"Login success",Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

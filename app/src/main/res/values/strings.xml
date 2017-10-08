@@ -12,6 +12,10 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="str_continue">Continue</string>
+    <string name="str_forgotpwd">Forgot Password</string>
+    <string name="str_cancel">Cancel</string>
+    <string name="prompt_schoolname">School Name</string>
     <string name="copyright_message">Copyright © 2017 Leidenschaft Industries Pvt Ltd, All rights reserved.</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
