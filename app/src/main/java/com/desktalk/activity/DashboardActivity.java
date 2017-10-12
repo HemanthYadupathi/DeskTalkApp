@@ -41,16 +41,16 @@ public class DashboardActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        addMenuItemInNavMenuDrawer();
+        addTeacherMenuInNavMenuDrawer();
     }
 
-    private void addMenuItemInNavMenuDrawer() {
+    private void addTeacherMenuInNavMenuDrawer() {
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
 
         Menu menu = navView.getMenu();
         menu.add(R.id.main, 0, 0, "Super Item1").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(0, 1, 0, "Super Item2").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(0, 2, 0, "Super Item3").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, 0, 0, "Super Item1").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, 0, 0, "Super Item1").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
 
         navView.invalidate();
     }
