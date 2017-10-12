@@ -1,4 +1,4 @@
-package com.activity.desktalkapp;
+package com.desktalk.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -20,6 +20,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.activity.desktalkapp.R;
 
 /**
  * A login screen that offers login via email/password.
@@ -43,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private TextView mTextViewForgotPwd;
+    private int userID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,14 +87,14 @@ public class LoginActivity extends AppCompatActivity {
                 final AlertDialog alertDialog = pwdDialog.create();
                 alertDialog.show();
                 EditText mEditTextSchoolName = (EditText) dialodView.findViewById(R.id.schoolName);
-                EditText mEditTextUserName = (EditText)dialodView.findViewById(R.id.userName);
-                Button mButtonContinue = (Button)dialodView.findViewById(R.id.btn_send);
+                EditText mEditTextUserName = (EditText) dialodView.findViewById(R.id.userName);
+                Button mButtonContinue = (Button) dialodView.findViewById(R.id.btn_send);
                 Button mButtonCancel = (Button) dialodView.findViewById(R.id.btn_cancel);
 
                 mButtonContinue.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(LoginActivity.this,"Button continue", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Button continue", Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
                     }
                 });
@@ -99,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                 mButtonCancel.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(LoginActivity.this,"Button cancel", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Button cancel", Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
                     }
                 });
@@ -276,11 +279,19 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
 
-            if(!(mEmail.contentEquals("demo")&&mPassword.contentEquals("demo")))
-                return false;
+            if (mEmail.contentEquals("demo") && mPassword.contentEquals("demo")) {
+                userID = 0;
+                return true;
+            } else if (mEmail.contentEquals("pdemo") && mPassword.contentEquals("demo")) {
+                userID = 1;
+                return true;
+            } else if (mEmail.contentEquals("sdemo") && mPassword.contentEquals("demo")) {
+                userID = 2;
+                return true;
+            }
 
-            // TODO: register the new account here.
-            return true;
+
+            return false;
         }
 
         @Override
@@ -291,7 +302,9 @@ public class LoginActivity extends AppCompatActivity {
             if (success) {
                 Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
                 finish();
-                startActivity(new Intent(LoginActivity.this,DashboardActivity.class));
+                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                intent.putExtra("userID", userID);
+                startActivity(intent);
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

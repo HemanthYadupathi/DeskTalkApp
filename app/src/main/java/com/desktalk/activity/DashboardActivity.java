@@ -1,10 +1,12 @@
-package com.activity.desktalkapp;
+package com.desktalk.activity;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,10 +14,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.activity.desktalkapp.R;
+import com.desktalk.fragment.AcademicsFragment;
+import com.desktalk.fragment.HomeFragment;
+import com.desktalk.fragment.ProfileFragment;
+import com.desktalk.util.Constants;
+
 public class DashboardActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
+        ProfileFragment.OnFragmentInteractionListener, AcademicsFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +35,25 @@ public class DashboardActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if (savedInstanceState == null) {
+            Fragment fragment = null;
+            Class fragmentClass = null;
+            fragmentClass = HomeFragment.class;
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.main_framelayout, fragment).commit();
+        }
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Start chatting, coming soon", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Chat coming soon....", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -41,16 +66,57 @@ public class DashboardActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        addTeacherMenuInNavMenuDrawer();
+        int userID = getIntent().getIntExtra("userID", 0);
+        if (userID == 0)
+            addTeacherMenuInNavMenuDrawer();
+        else if (userID == 1)
+            addParentMenuInNavMenuDrawer();
+        else if (userID == 2)
+            addStudentMenuInNavMenuDrawer();
     }
 
     private void addTeacherMenuInNavMenuDrawer() {
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
 
         Menu menu = navView.getMenu();
-        menu.add(R.id.main, 0, 0, "Super Item1").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, 0, 0, "Super Item1").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, 0, 0, "Super Item1").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ATTENDENCE, 0, "Attendance").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Manage Timetable").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_EXAM, 0, "Examination").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "Assignments").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_STD_PERFORMANCE, 0, "Student Performance").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_EVENTS, 0, "Create Event").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Approve Leave").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+
+
+        navView.invalidate();
+    }
+
+    private void addParentMenuInNavMenuDrawer() {
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+
+        Menu menu = navView.getMenu();
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Timetable").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_NEWS, 0, "View Newsletter").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "View Assignments").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Leave Application").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+
+
+        navView.invalidate();
+    }
+
+
+    private void addStudentMenuInNavMenuDrawer() {
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+
+        Menu menu = navView.getMenu();
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Timetable").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_NEWS, 0, "View Newsletter").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "View Assignments").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Leave Status").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+
 
         navView.invalidate();
     }
@@ -92,26 +158,33 @@ public class DashboardActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        Fragment fragment = null;
+        Class fragmentClass = null;
         if (id == R.id.nav_home) {
-            // Handle the camera action
-            Toast.makeText(DashboardActivity.this, "Home", Toast.LENGTH_SHORT).show();
+            fragmentClass = HomeFragment.class;
         } else if (id == R.id.nav_profile) {
+            fragmentClass = ProfileFragment.class;
+        } else if (id == R.id.nav_academics) {
+            fragmentClass = AcademicsFragment.class;
+        }
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == 0) {
-            Toast.makeText(DashboardActivity.this, "Super Item1", Toast.LENGTH_SHORT).show();
-        } else if (id == 1) {
-            Toast.makeText(DashboardActivity.this, "Super Item2", Toast.LENGTH_SHORT).show();
-        } else if (id == 2) {
-            Toast.makeText(DashboardActivity.this, "Super Item3", Toast.LENGTH_SHORT).show();
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.main_framelayout, fragment).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

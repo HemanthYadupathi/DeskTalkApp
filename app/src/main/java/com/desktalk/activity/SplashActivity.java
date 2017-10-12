@@ -1,4 +1,4 @@
-package com.activity.desktalkapp;
+package com.desktalk.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
