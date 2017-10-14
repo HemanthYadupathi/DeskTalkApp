@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-
-    tools:context="com.activity.desktalkapp.LoginActivity">
+    tools:context="com.desktalk.activity.LoginActivity">
 
     <!-- Login progress -->
     <ProgressBar

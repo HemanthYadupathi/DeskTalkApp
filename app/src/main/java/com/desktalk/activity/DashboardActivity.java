@@ -1,10 +1,12 @@
 package com.desktalk.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -15,25 +17,25 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.fragment.AcademicsFragment;
 import com.desktalk.fragment.HomeFragment;
-import com.desktalk.fragment.ProfileFragment;
 import com.desktalk.util.Constants;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
-        ProfileFragment.OnFragmentInteractionListener, AcademicsFragment.OnFragmentInteractionListener {
+        AcademicsFragment.OnFragmentInteractionListener {
+
+
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setToolBar(toolbar);
 
         if (savedInstanceState == null) {
             Fragment fragment = null;
@@ -49,7 +51,7 @@ public class DashboardActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.main_framelayout, fragment).commit();
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +75,10 @@ public class DashboardActivity extends AppCompatActivity
             addParentMenuInNavMenuDrawer();
         else if (userID == 2)
             addStudentMenuInNavMenuDrawer();
+    }
+
+    public void setToolBar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
     }
 
     private void addTeacherMenuInNavMenuDrawer() {
@@ -148,6 +154,7 @@ public class DashboardActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
             finish();
+            startActivity(new Intent(DashboardActivity.this,LoginActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -163,9 +170,14 @@ public class DashboardActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             fragmentClass = HomeFragment.class;
         } else if (id == R.id.nav_profile) {
-            fragmentClass = ProfileFragment.class;
+            Intent intent = new Intent(DashboardActivity.this, ProfileActivity.class);
+            /*Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(DashboardActivity.this,
+                    android.R.anim.fade_in, android.R.anim.fade_out).toBundle();*/
+            startActivity(intent);
+            overridePendingTransition(0,0);
         } else if (id == R.id.nav_academics) {
             fragmentClass = AcademicsFragment.class;
+            fab.setImageResource(android.R.drawable.ic_input_add);
         }
 
         try {

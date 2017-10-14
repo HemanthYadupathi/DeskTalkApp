@@ -19,6 +19,7 @@
         <activity
             android:name="com.desktalk.activity.SplashActivity"
             android:theme="@style/SplashTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,7 +32,30 @@
         <activity
             android:name="com.desktalk.activity.DashboardActivity"
             android:label="@string/title_activity_dashboard"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
+        <activity
+            android:name="com.desktalk.activity.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:parentActivityName="com.desktalk.activity.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.desktalk.activity.DashboardActivity" />
+        </activity>
+        <activity
+            android:name="com.desktalk.activity.EditProfileActivity"
+            android:parentActivityName="com.desktalk.activity.ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.desktalk.activity.ProfileActivity" />
+        </activity>
     </application>
 
 </manifest>

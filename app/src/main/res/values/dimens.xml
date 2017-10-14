@@ -5,4 +5,9 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="app_bar_height">220dp</dimen>
+    <dimen name="app_bar_height_tab">320dp</dimen>
+    <dimen name="app_bar_width_land">280dp</dimen>
+    <dimen name="app_bar_width_land_tab">500dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>
