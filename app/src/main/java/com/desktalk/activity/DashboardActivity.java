@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.fragment.AcademicsFragment;
@@ -29,6 +30,7 @@ public class DashboardActivity extends AppCompatActivity
 
 
     private FloatingActionButton fab;
+    private TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
