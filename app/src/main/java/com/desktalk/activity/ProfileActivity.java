@@ -34,6 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
                 ActivityOptionsCompat options = ActivityOptionsCompat.
                         makeSceneTransitionAnimation(ProfileActivity.this, (View)fab, "profile");
                 startActivity(intent,options.toBundle());
+
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

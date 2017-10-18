@@ -1,29 +1,33 @@
 package com.desktalk.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.activity.DashboardActivity;
-import com.desktalk.util.ViewPagerAdapter;
+import com.desktalk.activity.EditProfileActivity;
+import com.desktalk.activity.ProfileActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AcademicsFragment.OnFragmentInteractionListener} interface
+ * {@link ProfileFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AcademicsFragment#newInstance} factory method to
+ * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AcademicsFragment extends Fragment {
+public class ProfileFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,7 +39,9 @@ public class AcademicsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public AcademicsFragment() {
+    Toolbar mToolbar;
+
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
@@ -45,11 +51,11 @@ public class AcademicsFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment AcademicsFragment.
+     * @return A new instance of fragment ProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AcademicsFragment newInstance(String param1, String param2) {
-        AcademicsFragment fragment = new AcademicsFragment();
+    public static ProfileFragment newInstance(String param1, String param2) {
+        ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -69,23 +75,37 @@ public class AcademicsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_academics, container, false);
-        Toolbar mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        View rootView = inflater.inflate(R.layout.activity_profile, container, false);
+        mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
 
-        ((DashboardActivity) getActivity()).setToolbar(mToolbar, "Academics");
+        ((DashboardActivity) getActivity()).setToolbar(mToolbar, "Profile");
 
-        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        View v = rootView.findViewById(R.id.id_content);
 
-        // Add Fragments to adapter one by one
-        adapter.addFragment(new BlankFragment(), "FRAG1");
-        adapter.addFragment(new BlankFragment(), "FRAG2");
-        adapter.addFragment(new BlankFragment(), "FRAG3");
-        viewPager.setAdapter(adapter);
+        final FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), EditProfileActivity.class);
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(getActivity(), (View) fab, "profile");
+                startActivity(intent, options.toBundle());
 
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tablayout);
-        tabLayout.setupWithViewPager(viewPager);
+            }
+        });
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        NestedScrollView nsv = (NestedScrollView) rootView.findViewById(R.id.nestedscrollView);
+        nsv.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY > oldScrollY) {
+                    fab.hide();
+                } else {
+                    fab.show();
+                }
+            }
+        });
+
         return rootView;
     }
 

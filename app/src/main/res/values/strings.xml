@@ -5,6 +5,19 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Username</string>
     <string name="email">Email</string>
+    <string name="prompt_phone">Phone Number</string>
+    <string name="prompt_dob">DOB</string>
+    <string name="prompt_gender">Gender</string>
+    <string name="prompt_fathername">Father Name</string>
+    <string name="prompt_mothername">Mother Name</string>
+    <string name="prompt_blooggrp">Blood Group</string>
+    <string name="prompt_address">Address</string>
+    <string name="prompt_qualification">Qualification</string>
+    <string name="prompt_des">Description</string>
+    <string name="prompt_hobbies">Hobbies</string>
+    <string name="prompt_skills">Skills</string>
+    <string name="prompt_preschname">Previous School Name</string>
+    <string name="prompt_yearofedu">Year of Education</string>
     <string name="prompt_fName">First Name</string>
     <string name="prompt_lName">Last Name</string>
     <string name="prompt_password">Password</string>
@@ -126,4 +139,10 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_edit_profile">EditProfile</string>
+    <string-array name="gender">
+        <item>Gender</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
