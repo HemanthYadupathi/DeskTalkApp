@@ -28,7 +28,7 @@ public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
         AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
-
+    int int_value=0;
     private FloatingActionButton fab;
     NavigationView navigationView;
 
