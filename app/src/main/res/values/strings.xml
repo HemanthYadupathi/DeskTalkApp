@@ -139,10 +139,6 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_edit_profile">EditProfile</string>
-    <string-array name="gender">
-        <item>Gender</item>
-        <item>Male</item>
-        <item>Female</item>
-    </string-array>
+
     <string name="title_activity_main">MainActivity</string>
 </resources>

@@ -41,6 +41,16 @@
             app:layout_scrollFlags="enterAlways|scroll|snap"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinner_class"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/classes"
+            android:gravity="center"
+            android:visibility="visible">
+
+        </android.support.v7.widget.AppCompatSpinner>
+
         <android.support.design.widget.TabLayout
             android:id="@+id/tablayout"
             android:layout_width="match_parent"

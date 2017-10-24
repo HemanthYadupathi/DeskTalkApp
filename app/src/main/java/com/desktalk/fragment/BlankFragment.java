@@ -52,7 +52,7 @@ public class BlankFragment extends Fragment {
 
         View rootview = inflater.inflate(R.layout.fragment_blank, container, false);
         mRecyclerView = (RecyclerView) rootview.findViewById(R.id.recylerview);
-        mRecyclerView.setHasFixedSize(true);
+//        mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RecylerviewAdapter(getDataSet());
