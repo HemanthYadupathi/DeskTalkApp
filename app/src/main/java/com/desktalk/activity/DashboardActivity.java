@@ -28,9 +28,11 @@ public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
         AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
-    int int_value=0;
+    int int_value = 0;
+    int selected_ID=0;
     private FloatingActionButton fab;
     NavigationView navigationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,12 +71,16 @@ public class DashboardActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         int userID = getIntent().getIntExtra("userID", 0);
-        if (userID == 0)
+        if (userID == 0) {
+            selected_ID=0;
             addTeacherMenuInNavMenuDrawer();
-        else if (userID == 1)
+        } else if (userID == 1) {
+            selected_ID=1;
             addParentMenuInNavMenuDrawer();
-        else if (userID == 2)
+        } else if (userID == 2) {
+            selected_ID=2;
             addStudentMenuInNavMenuDrawer();
+        }
     }
 
     public void setToolbar(Toolbar toolbar, String title) {
@@ -97,14 +103,14 @@ public class DashboardActivity extends AppCompatActivity
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
 
         Menu menu = navView.getMenu();
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ATTENDENCE, 0, "Attendance").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Manage Timetable").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_EXAM, 0, "Examination").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "Assignments").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_STD_PERFORMANCE, 0, "Student Performance").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_EVENTS, 0, "Create Event").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Approve Leave").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ATTENDENCE, 0, "Attendance").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Manage Timetable").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_EXAM, 0, "Examination").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "Assignments").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_STD_PERFORMANCE, 0, "Student Performance").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_EVENTS, 0, "Create Event").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Approve Leave").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
 
 
         navView.invalidate();
@@ -114,11 +120,11 @@ public class DashboardActivity extends AppCompatActivity
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
 
         Menu menu = navView.getMenu();
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Timetable").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_NEWS, 0, "View Newsletter").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "View Assignments").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Leave Application").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Timetable").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_NEWS, 0, "View Newsletter").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "View Assignments").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Leave Application").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
 
 
         navView.invalidate();
@@ -129,8 +135,8 @@ public class DashboardActivity extends AppCompatActivity
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
 
         Menu menu = navView.getMenu();
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Timetable").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_NEWS, 0, "View Newsletter").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Timetable").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_NEWS, 0, "View Newsletter").setIcon(getResources().getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
         menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "View Assignments").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
         menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Leave Status").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
         menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_launcher)).setCheckable(true);
@@ -217,6 +223,9 @@ public class DashboardActivity extends AppCompatActivity
         }
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
+            Bundle arguments = new Bundle();
+            arguments.putInt("selected_ID", selected_ID);
+            fragment.setArguments(arguments);
             fragmentManager.beginTransaction().replace(R.id.main_framelayout, fragment).commit();
         }
 

@@ -1,15 +1,19 @@
 package com.desktalk.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.activity.DashboardActivity;
@@ -28,6 +32,8 @@ public class AcademicsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private static int selected_ID=0;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -49,6 +55,7 @@ public class AcademicsFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static AcademicsFragment newInstance(String param1, String param2) {
+        Log.d(param1,param2);
         AcademicsFragment fragment = new AcademicsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -60,6 +67,10 @@ public class AcademicsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            this.selected_ID=Integer.valueOf(bundle.getInt("selected_ID", 0));
+        }
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -78,10 +89,51 @@ public class AcademicsFragment extends Fragment {
         ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
 
+        FloatingActionButton fab=(FloatingActionButton) rootView.findViewById(R.id.fragment_academics_fab);
+        fab.bringToFront();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.add_academics_info);
+                dialog.setTitle("Title...");
+                // set the custom dialog components - text, image and button
+                /*ImageView dialogButton = (ImageView) dialog.findViewById(R.id.dialogButtonOK);
+                // if button is clicked, close the custom dialog
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });*/
+
+                dialog.show();
+            }
+        });
+
         // Add Fragments to adapter one by one
-        adapter.addFragment(new BlankFragment(), "FRAG1");
-        adapter.addFragment(new BlankFragment(), "FRAG2");
-        adapter.addFragment(new BlankFragment(), "FRAG3");
+        Log.i("selected_ID", String.valueOf(selected_ID));
+        Bundle Syllabusbundle = new Bundle();
+        Syllabusbundle.putInt("selected_ID",selected_ID);
+        Syllabusbundle.putString("Value", "Syllabus");
+        SyllabusFragment syllabusFragment = new SyllabusFragment();
+        syllabusFragment.setArguments(Syllabusbundle);
+
+        Bundle Papersbundle = new Bundle();
+        Syllabusbundle.putInt("selected_ID",selected_ID);
+        Papersbundle.putString("Value", "Previous Question Papers");
+        SyllabusFragment PapersFragment = new SyllabusFragment();
+        PapersFragment.setArguments(Papersbundle);
+
+        Bundle Notesbundle = new Bundle();
+        Syllabusbundle.putInt("selected_ID",selected_ID);
+        Notesbundle.putString("Value", "Important Notes");
+        SyllabusFragment NotesFragment = new SyllabusFragment();
+        NotesFragment.setArguments(Notesbundle);
+
+        adapter.addFragment(syllabusFragment, "Syllabus");
+        adapter.addFragment(PapersFragment, "Previous Question Papers");
+        adapter.addFragment(NotesFragment, "Important Notes");
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tablayout);
