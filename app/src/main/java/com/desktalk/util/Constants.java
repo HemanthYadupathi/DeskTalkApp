@@ -15,4 +15,5 @@ public class Constants {
     public static final int NAV_MENU_ITEM_LEAVES = 777;
     public static final int NAV_MENU_ITEM_NEWS = 888;
     public static final int NAV_MENU_ITEM_SUGGESTION = 999;
+    public static int USER_ID = 0;
 }

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;;import com.activity.desktalkapp.R;
+import com.desktalk.util.Constants;
 import com.desktalk.util.MyAdapter;
 
 import java.util.ArrayList;
@@ -34,10 +35,12 @@ public class SyllabusFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
         String category = this.getArguments().getString("Value");
-        Integer selected_ID = this.getArguments().getInt("selected_ID");
+//        Integer selected_ID = this.getArguments().getInt("selected_ID");
         ArrayList<String> list = new ArrayList<String>();
+        Log.e("selected_ID + category ", Constants.USER_ID+"");
         if (category.equals("Syllabus")) {
-            if (selected_ID == 2) {
+            Log.e("selected_ID ", getArguments().getInt("selected_ID") + category);
+            if (Constants.USER_ID == 2) {
                 list.clear();
                 list.add("English 1");
                 list.add("English 2");
@@ -45,13 +48,17 @@ public class SyllabusFragment extends Fragment {
                 list.add("English 4");
                 list.add("English 5");
                 list.add("English 6");
-            } else if (selected_ID == 0) {
+            }
+            if (Constants.USER_ID == 0) {
                 list.clear();
                 list.add("English 1");
                 list.add("English 2");
+                list.add("English 3");
             }
         } else if (category.equals("Previous Question Papers")) {
-            if (selected_ID == 2) {
+            Log.e("selected_ID ", getArguments().getInt("selected_ID") + category);
+
+            if (Constants.USER_ID == 2) {
                 list.clear();
                 list.add("English 1");
                 list.add("English 2");
@@ -59,13 +66,18 @@ public class SyllabusFragment extends Fragment {
                 list.add("English 4");
                 list.add("English 5");
                 list.add("English 6");
-            } else if (selected_ID == 0) {
+            }
+            if (Constants.USER_ID == 0) {
                 list.clear();
+                list.add("English 1");
+                list.add("English 2");
                 list.add("English 1");
                 list.add("English 2");
             }
         } else if (category.equals("Important Notes")) {
-            if (selected_ID == 2) {
+            Log.e("selected_ID ", getArguments().getInt("selected_ID") + category);
+
+            if (Constants.USER_ID == 2) {
                 list.clear();
                 list.add("English 1");
                 list.add("English 2");
@@ -73,7 +85,8 @@ public class SyllabusFragment extends Fragment {
                 list.add("English 4");
                 list.add("English 5");
                 list.add("English 6");
-            } else if (selected_ID == 0) {
+            }
+            if (Constants.USER_ID == 0) {
                 list.clear();
                 list.add("English 1");
                 list.add("English 2");

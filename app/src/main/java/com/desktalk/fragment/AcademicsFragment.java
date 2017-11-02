@@ -33,7 +33,7 @@ public class AcademicsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private static int selected_ID=0;
+    private int selected_ID = 0;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -55,7 +55,7 @@ public class AcademicsFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static AcademicsFragment newInstance(String param1, String param2) {
-        Log.d(param1,param2);
+        Log.d(param1, param2);
         AcademicsFragment fragment = new AcademicsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -69,7 +69,7 @@ public class AcademicsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            this.selected_ID=Integer.valueOf(bundle.getInt("selected_ID", 0));
+            this.selected_ID = Integer.valueOf(bundle.getInt("selected_ID", 0));
         }
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -89,7 +89,7 @@ public class AcademicsFragment extends Fragment {
         ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
 
-        FloatingActionButton fab=(FloatingActionButton) rootView.findViewById(R.id.fragment_academics_fab);
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_academics_fab);
         fab.bringToFront();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,22 +114,24 @@ public class AcademicsFragment extends Fragment {
         // Add Fragments to adapter one by one
         Log.i("selected_ID", String.valueOf(selected_ID));
         Bundle Syllabusbundle = new Bundle();
-        Syllabusbundle.putInt("selected_ID",selected_ID);
+        Syllabusbundle.putInt("selected_ID", selected_ID);
         Syllabusbundle.putString("Value", "Syllabus");
         SyllabusFragment syllabusFragment = new SyllabusFragment();
         syllabusFragment.setArguments(Syllabusbundle);
 
         Bundle Papersbundle = new Bundle();
-        Syllabusbundle.putInt("selected_ID",selected_ID);
+        Syllabusbundle.putInt("selected_ID", selected_ID);
         Papersbundle.putString("Value", "Previous Question Papers");
         SyllabusFragment PapersFragment = new SyllabusFragment();
         PapersFragment.setArguments(Papersbundle);
 
         Bundle Notesbundle = new Bundle();
-        Syllabusbundle.putInt("selected_ID",selected_ID);
+        Syllabusbundle.putInt("selected_ID", selected_ID);
         Notesbundle.putString("Value", "Important Notes");
         SyllabusFragment NotesFragment = new SyllabusFragment();
         NotesFragment.setArguments(Notesbundle);
+
+//        Log.e("Academics selected_ID ", selected_ID + "");
 
         adapter.addFragment(syllabusFragment, "Syllabus");
         adapter.addFragment(PapersFragment, "Previous Question Papers");

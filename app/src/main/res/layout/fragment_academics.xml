@@ -66,8 +66,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
-        android:transitionName="profile"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@mipmap/ic_add" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

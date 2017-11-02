@@ -65,6 +65,6 @@
         android:transitionName="profile"
         app:layout_anchor="@+id/nestedscrollView"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        app:srcCompat="@mipmap/ic_edit" />
 
 </android.support.design.widget.CoordinatorLayout>

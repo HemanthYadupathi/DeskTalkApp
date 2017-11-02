@@ -22,7 +22,7 @@ public class SplashActivity extends AppCompatActivity {
                 try {
                     synchronized (this) {
                         // Wait given period of time or exit on touch
-                        wait(2000);
+                        wait(1500);
                     }
                 } catch (InterruptedException ex) {
                 }

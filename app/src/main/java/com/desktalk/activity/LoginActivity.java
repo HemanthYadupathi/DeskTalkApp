@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.util.Constants;
 
 /**
  * A login screen that offers login via email/password.
@@ -280,13 +281,16 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             if (mEmail.contentEquals("demo") && mPassword.contentEquals("demo")) {
-                userID = 0;
+//                userID = 0;
+                Constants.USER_ID = 0;
                 return true;
             } else if (mEmail.contentEquals("pdemo") && mPassword.contentEquals("demo")) {
                 userID = 1;
+                Constants.USER_ID = 1;
                 return true;
             } else if (mEmail.contentEquals("sdemo") && mPassword.contentEquals("demo")) {
                 userID = 2;
+                Constants.USER_ID = 2;
                 return true;
             }
 
