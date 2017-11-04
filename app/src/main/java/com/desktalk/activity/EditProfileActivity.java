@@ -132,17 +132,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         final EditText mEditTextAdd = (EditText) dialodView.findViewById(R.id.edittext_add);
         Button mButtonAdd = (Button) dialodView.findViewById(R.id.btn_add);
 
-        /*LayoutInflater inflater = LayoutInflater.from(EditProfileActivity.this);
-        inflatedLayout = inflater.inflate(R.layout.layout_text_clear, null, false);
-        mImageDelete = (ImageView) inflatedLayout.findViewById(R.id.imageClear);
-
-
-        mImageDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(EditProfileActivity.this, "delete " + inflatedLayout.getId(), Toast.LENGTH_SHORT).show();
-            }
-        });*/
         switch (view.getId()) {
             case R.id.layoutHobbies:
                 mEditTextAdd.setHint("Add your hobby");
@@ -191,6 +180,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                                 public void onClick(View view) {
                                     ((LinearLayout) inflatedLayout.getParent()).removeView(inflatedLayout);
                                     Toast.makeText(EditProfileActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+
                                 }
                             });
                             inflatedLayout.setId(skillIndex);

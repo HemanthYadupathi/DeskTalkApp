@@ -17,6 +17,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.fragment.AcademicsFragment;
@@ -29,9 +31,10 @@ public class DashboardActivity extends AppCompatActivity
         AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
     int int_value = 0;
-    int selected_ID=0;
-    private FloatingActionButton fab;
-    NavigationView navigationView;
+    int selected_ID = 0;
+    private NavigationView navigationView;
+    ;
+    private DrawerLayout drawer;
 
 
     @Override
@@ -53,32 +56,29 @@ public class DashboardActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.main_framelayout, fragment).commit();
         }
 
-        /*fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerview = navigationView.getHeaderView(0);
+        TextView profilename = (TextView) headerview.findViewById(R.id.textViewEdit);
+        profilename.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Chat coming soon....", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                drawer.closeDrawers();
+                Intent intent = new Intent(DashboardActivity.this, EditProfileActivity.class);
+                startActivity(intent);
             }
-        });*/
-
-       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();*/
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        });
+        navigationView.setCheckedItem(R.id.nav_home);
         int userID = getIntent().getIntExtra("userID", 0);
         if (Constants.USER_ID == 0) {
-            selected_ID=0;
+            selected_ID = 0;
             addTeacherMenuInNavMenuDrawer();
         } else if (Constants.USER_ID == 1) {
-            selected_ID=1;
+            selected_ID = 1;
             addParentMenuInNavMenuDrawer();
         } else if (Constants.USER_ID == 2) {
-            selected_ID=2;
+            selected_ID = 2;
             addStudentMenuInNavMenuDrawer();
         }
     }
@@ -229,7 +229,7 @@ public class DashboardActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.main_framelayout, fragment).commit();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

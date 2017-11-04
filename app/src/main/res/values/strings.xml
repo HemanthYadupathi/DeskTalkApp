@@ -13,6 +13,9 @@
     <string name="prompt_blooggrp">Blood Group</string>
     <string name="prompt_address">Address</string>
     <string name="prompt_qualification">Qualification</string>
+    <string name="prompt_preschool">Previous School Name</string>
+    <string name="prompt_yearEdu">Year of Education</string>
+    <string name="prompt_role">Role</string>
     <string name="prompt_des">Description</string>
     <string name="prompt_hobbies">Hobbies</string>
     <string name="prompt_skills">Skills</string>

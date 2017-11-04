@@ -210,6 +210,25 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/prompt_address" />
+
+        <EditText
+            android:id="@+id/edittextAddress"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="top"
+            android:hint="@string/prompt_address"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
+            android:textAlignment="gravity" />
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -228,11 +247,31 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/prompt_des" />
+
+        <EditText
+            android:id="@+id/edittextDes"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="top"
+            android:hint="@string/prompt_des"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
+            android:textAlignment="gravity" />
+
         <RelativeLayout
             android:id="@+id/layoutHobbies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_margin="2dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
             <TextView
@@ -249,25 +288,30 @@
                 android:src="@mipmap/ic_add_blue" />
         </RelativeLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="2dp"
+            android:background="@color/colorMainApp" />
+
         <LinearLayout
             android:id="@+id/layoutHobbiesList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="2dp"
             android:layout_marginTop="5dp"
             android:orientation="vertical">
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/colorMainApp" />
 
         <RelativeLayout
             android:id="@+id/layoutSkills"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_margin="2dp"
+            android:layout_marginTop="8dp"
+
             android:orientation="horizontal">
 
             <TextView
@@ -284,18 +328,74 @@
                 android:src="@mipmap/ic_add_blue" />
         </RelativeLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="2dp"
+            android:background="@color/colorMainApp" />
+
         <LinearLayout
             android:id="@+id/layoutSkillsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="2dp"
             android:layout_marginTop="5dp"
+
             android:orientation="vertical">
 
         </LinearLayout>
 
-        <TextView
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/colorMainApp" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <EditText
+                android:id="@+id/edittextPreSchool"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_preschool"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <EditText
+                android:id="@+id/edittextYear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_yearEdu"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+
+            <EditText
+                android:id="@+id/edittextRole"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:hint="@string/prompt_role"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Role"
+                android:textColor="@color/colorGreyNonEdit" />
+
+        </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
