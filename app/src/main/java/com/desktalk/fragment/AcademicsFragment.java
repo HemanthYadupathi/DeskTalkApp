@@ -2,8 +2,12 @@ package com.desktalk.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,16 +17,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.activity.DashboardActivity;
+import com.desktalk.util.Constants;
 import com.desktalk.util.ViewPagerAdapter;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AcademicsFragment.OnFragmentInteractionListener} interface
+ * {@link OnFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link AcademicsFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -33,7 +45,8 @@ public class AcademicsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private int selected_ID = 0;
+    ImageView choosen_image;
+    TextView no_file_choosen;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -67,14 +80,11 @@ public class AcademicsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            this.selected_ID = Integer.valueOf(bundle.getInt("selected_ID", 0));
-        }
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -91,12 +101,28 @@ public class AcademicsFragment extends Fragment {
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_academics_fab);
         fab.bringToFront();
+        if (Constants.USER_ID == 0) {
+            fab.setVisibility(View.VISIBLE);
+        } else if (Constants.USER_ID == 2) {
+            fab.setVisibility(View.GONE);
+        }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Dialog dialog = new Dialog(getContext());
                 dialog.setContentView(R.layout.add_academics_info);
                 dialog.setTitle("Title...");
+                Button add_images = (Button) dialog.findViewById(R.id.add_images);
+                choosen_image = (ImageView) dialog.findViewById(R.id.choosen_image);
+                no_file_choosen = (TextView) dialog.findViewById(R.id.no_file_choosen);
+                add_images.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        photoPickerIntent.setType("file/*");
+                        startActivityForResult(photoPickerIntent, 1);
+                    }
+                });
                 // set the custom dialog components - text, image and button
                 /*ImageView dialogButton = (ImageView) dialog.findViewById(R.id.dialogButtonOK);
                 // if button is clicked, close the custom dialog
@@ -112,26 +138,21 @@ public class AcademicsFragment extends Fragment {
         });
 
         // Add Fragments to adapter one by one
-        Log.i("selected_ID", String.valueOf(selected_ID));
         Bundle Syllabusbundle = new Bundle();
-        Syllabusbundle.putInt("selected_ID", selected_ID);
         Syllabusbundle.putString("Value", "Syllabus");
         SyllabusFragment syllabusFragment = new SyllabusFragment();
         syllabusFragment.setArguments(Syllabusbundle);
 
         Bundle Papersbundle = new Bundle();
-        Syllabusbundle.putInt("selected_ID", selected_ID);
         Papersbundle.putString("Value", "Previous Question Papers");
         SyllabusFragment PapersFragment = new SyllabusFragment();
         PapersFragment.setArguments(Papersbundle);
 
         Bundle Notesbundle = new Bundle();
-        Syllabusbundle.putInt("selected_ID", selected_ID);
         Notesbundle.putString("Value", "Important Notes");
         SyllabusFragment NotesFragment = new SyllabusFragment();
         NotesFragment.setArguments(Notesbundle);
 
-//        Log.e("Academics selected_ID ", selected_ID + "");
 
         adapter.addFragment(syllabusFragment, "Syllabus");
         adapter.addFragment(PapersFragment, "Previous Question Papers");
@@ -181,4 +202,21 @@ public class AcademicsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data != null) {
+            try {
+                no_file_choosen.setVisibility(View.GONE);
+                choosen_image.setVisibility(View.VISIBLE);
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getContext().getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                choosen_image.setImageBitmap(selectedImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 }

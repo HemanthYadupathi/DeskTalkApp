@@ -11,17 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
 
 import java.util.ArrayList;
 
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+public class Teacher_Adapter extends RecyclerView.Adapter<Teacher_Adapter.MyViewHolder> {
     private ArrayList<String> mDataset;
     private Context  mContext;
 
@@ -44,7 +42,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(ArrayList<String>  myDataset, Context myContextt) {
+    public Teacher_Adapter(ArrayList<String>  myDataset, Context myContextt) {
         mDataset = myDataset;
         mContext=myContextt;
     }
@@ -55,7 +53,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                                                      int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.syllabus_card, parent, false);
+                .inflate(R.layout.teacher_card, parent, false);
         // set the view's size, margins, paddings and layout parameters
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
