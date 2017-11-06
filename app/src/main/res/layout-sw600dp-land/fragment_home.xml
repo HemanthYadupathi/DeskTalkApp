@@ -36,7 +36,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="4">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/card_view_personalInfo"
@@ -112,12 +113,6 @@
 
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
                 <android.support.v7.widget.CardView
                     android:layout_width="0dp"
@@ -194,71 +189,78 @@
                 </android.support.v7.widget.CardView>
             </LinearLayout>
 
-            <android.support.v7.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                card_view:cardCornerRadius="4dp"
-                card_view:contentPadding="10dp">
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-                <LinearLayout
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_margin="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    card_view:cardCornerRadius="4dp"
+                    card_view:contentPadding="10dp">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Upcoming Events" />
+                        android:orientation="vertical">
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/event_img" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Upcoming Events" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="No upcoming events" />
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/event_img" />
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                card_view:cardCornerRadius="4dp"
-                card_view:contentPadding="10dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="No upcoming events" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
 
-                <LinearLayout
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_margin="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    card_view:cardCornerRadius="4dp"
+                    card_view:contentPadding="10dp">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Examination" />
+                        android:orientation="vertical">
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/exam_img" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Examination" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="View Examination" />
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/exam_img" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="View Examination" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
