@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
 android {
     compileSdkVersion 24
     buildToolsVersion "25.0.0"
@@ -34,4 +37,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-plus:8.4.0'
     compile 'com.android.support:recyclerview-v7:24.0.+'
     testCompile 'junit:junit:4.12'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
+
+
 }

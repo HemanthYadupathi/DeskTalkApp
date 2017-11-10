@@ -32,6 +32,8 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="str_continue">Continue</string>
+    <string name="str_submit">Submit</string>
+    <string name="str_choose_file">Choose File</string>
     <string name="str_forgotpwd">Forgot Password</string>
     <string name="str_cancel">Cancel</string>
     <string name="str_add">Add</string>

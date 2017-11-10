@@ -4,13 +4,26 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.CardFragmentPagerAdapter;
+import com.desktalk.ShadowTransformer;
 import com.desktalk.activity.DashboardActivity;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.YAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,7 +42,7 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    BarData data;
     private OnFragmentInteractionListener mListener;
 
     Toolbar mToolbar;
@@ -71,9 +84,87 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+
+        CardFragmentPagerAdapter pagerAdapter = new CardFragmentPagerAdapter(getActivity().getSupportFragmentManager(), dpToPixels(2, getActivity()));
+        ShadowTransformer fragmentCardShadowTransformer = new ShadowTransformer(viewPager, pagerAdapter);
+        fragmentCardShadowTransformer.enableScaling(true);
+
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setPageTransformer(false, fragmentCardShadowTransformer);
+        viewPager.setOffscreenPageLimit(3);
+
+
+        BarChart barChart = (BarChart) view.findViewById(R.id.barchart);
+
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        entries.add(new BarEntry(8f, 0));
+        entries.add(new BarEntry(2f, 1));
+        entries.add(new BarEntry(5f, 2));
+        entries.add(new BarEntry(20f, 3));
+        entries.add(new BarEntry(30f, 4));
+        entries.add(new BarEntry(19f, 5));
+        entries.add(new BarEntry(2f, 6));
+        entries.add(new BarEntry(5f, 7));
+        entries.add(new BarEntry(20f, 8));
+        entries.add(new BarEntry(15f, 9));
+        entries.add(new BarEntry(19f, 10));
+
+
+        BarDataSet bardataset = new BarDataSet(entries, "Cells");
+
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.add("Jan");
+        labels.add("Feb");
+        labels.add("Mar");
+        labels.add("Apr");
+        labels.add("May");
+        labels.add("Jun");
+        labels.add("Jul");
+        labels.add("Aug");
+        labels.add("Sep");
+        labels.add("Oct");
+        labels.add("Nov");
+
+        data = new BarData(labels, bardataset);
+        barChart.setData(data); // set the data and list of lables into chart
+        barChart.setDescription(" ");  // set the description
+        barChart.setScaleXEnabled(true);
+        barChart.setScaleYEnabled(false);
+        barChart.setExtraBottomOffset(10);
+        barChart.animateXY(0, 1000);
+        barChart.setPinchZoom(false);
+        barChart.getLegend().setEnabled(false);
+//        barChart.getXAxis().setTextSize(7f);
+
+
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        barChart.isDrawValueAboveBarEnabled();//returns true or false
+
+        YAxis yAxisLeft = barChart.getAxisLeft();
+        yAxisLeft.setValueFormatter(new YAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, YAxis yAxis) {
+                return Math.round(value) + "";
+            }
+        });
+
+        YAxis yAxisRight = barChart.getAxisRight();
+        yAxisRight.setEnabled(false);
+
+        bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
+
+        barChart.animateY(5000);
+
 
         ((DashboardActivity) getActivity()).setToolbar(mToolbar, "DeskTalk");
         return view;
+    }
+
+    public static float dpToPixels(int dp, Context context) {
+        return dp * (context.getResources().getDisplayMetrics().density);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

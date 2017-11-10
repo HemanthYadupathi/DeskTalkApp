@@ -3,10 +3,7 @@ package com.desktalk.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -18,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.fragment.AcademicsFragment;
@@ -35,6 +31,7 @@ public class DashboardActivity extends AppCompatActivity
     private NavigationView navigationView;
     ;
     private DrawerLayout drawer;
+
 
 
     @Override
@@ -61,6 +58,7 @@ public class DashboardActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View headerview = navigationView.getHeaderView(0);
         TextView profilename = (TextView) headerview.findViewById(R.id.textViewEdit);
+
         profilename.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,10 +101,13 @@ public class AcademicsFragment extends Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_academics_fab);
+        AppCompatSpinner spinner_class = (AppCompatSpinner) rootView.findViewById(R.id.spinner_class);
         fab.bringToFront();
         if (Constants.USER_ID == 0) {
+            spinner_class.setVisibility(View.VISIBLE);
             fab.setVisibility(View.VISIBLE);
         } else if (Constants.USER_ID == 2) {
+            spinner_class.setVisibility(View.GONE);
             fab.setVisibility(View.GONE);
         }
         fab.setOnClickListener(new View.OnClickListener() {
