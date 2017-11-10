@@ -15,13 +15,15 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/layout_textstudentheading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_toLeftOf="@+id/student_image_download"
+                android:orientation="vertical"
+                android:paddingLeft="5dp">
 
                 <TextView
                     android:id="@+id/tv_text"
@@ -42,11 +44,12 @@
             </LinearLayout>
 
             <ImageView
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
                 android:id="@+id/student_image_download"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"

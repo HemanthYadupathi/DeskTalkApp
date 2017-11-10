@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.activity.desktalkapp.R;
-import com.desktalk.CardFragmentPagerAdapter;
-import com.desktalk.ShadowTransformer;
+import com.desktalk.adapter.CardFragmentPagerAdapter;
+import com.desktalk.util.ShadowTransformer;
 import com.desktalk.activity.DashboardActivity;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;

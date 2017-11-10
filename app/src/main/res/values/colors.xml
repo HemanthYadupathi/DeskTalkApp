@@ -6,6 +6,7 @@
     <color name="colorMainApp">#112852</color>
     <color name="colorMainAppLight">#193d7c</color>
     <color name="colorWhite">#FFF</color>
+    <color name="colorBlackLight">#434343</color>
     <color name="colorGreyNonEdit">#686767</color>
 
 </resources>

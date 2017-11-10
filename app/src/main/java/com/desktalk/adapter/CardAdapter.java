@@ -1,4 +1,4 @@
-package com.desktalk;
+package com.desktalk.adapter;
 
 
 import android.support.v7.widget.CardView;

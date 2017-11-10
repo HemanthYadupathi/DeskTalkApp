@@ -26,6 +26,9 @@
     <string name="prompt_password">Password</string>
     <string name="text_forgotpwd">Forgot Password ?</string>
     <string name="action_sign_in">LOGIN</string>
+    <string name="text_class_behaviour">Class Behaviour</string>
+    <string name="text_acd_perfprmance">Academic Performance</string>
+    <string name="text_etra_activity">Extra curricular activities</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>

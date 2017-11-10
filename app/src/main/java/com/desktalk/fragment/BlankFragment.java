@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.adapter.RecylerviewAdapter;
 import com.desktalk.util.DataObject;
-import com.desktalk.util.RecylerviewAdapter;
 
 import java.util.ArrayList;
 

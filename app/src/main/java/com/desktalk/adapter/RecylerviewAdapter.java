@@ -1,4 +1,4 @@
-package com.desktalk.util;
+package com.desktalk.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.util.DataObject;
 
 import java.util.ArrayList;
 

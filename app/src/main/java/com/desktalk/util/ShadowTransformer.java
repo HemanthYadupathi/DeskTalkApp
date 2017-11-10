@@ -1,8 +1,10 @@
-package com.desktalk;
+package com.desktalk.util;
 
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.view.View;
+
+import com.desktalk.adapter.CardAdapter;
 
 public class ShadowTransformer implements ViewPager.OnPageChangeListener, ViewPager.PageTransformer {
 

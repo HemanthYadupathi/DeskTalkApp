@@ -11,9 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;;import com.activity.desktalkapp.R;
+import com.desktalk.adapter.Student_Adapter;
+import com.desktalk.adapter.Teacher_Adapter;
 import com.desktalk.util.Constants;
-import com.desktalk.util.Student_Adapter;
-import com.desktalk.util.Teacher_Adapter;
 
 import java.util.ArrayList;
 
