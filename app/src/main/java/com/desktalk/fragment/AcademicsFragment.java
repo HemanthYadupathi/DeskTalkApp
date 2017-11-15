@@ -3,6 +3,7 @@ package com.desktalk.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -26,6 +27,11 @@ import com.desktalk.activity.DashboardActivity;
 import com.desktalk.adapter.ViewPagerAdapter;
 import com.desktalk.util.Constants;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -49,6 +55,8 @@ public class AcademicsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
 
     private OnFragmentInteractionListener mListener;
 
@@ -88,6 +96,10 @@ public class AcademicsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        sharedpreferences = getContext().getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE); //1
+        editor = sharedpreferences.edit();
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_academics, container, false);
         Toolbar mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
@@ -100,12 +112,17 @@ public class AcademicsFragment extends Fragment {
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_academics_fab);
         AppCompatSpinner spinner_class = (AppCompatSpinner) rootView.findViewById(R.id.spinner_class);
         fab.bringToFront();
-        if (Constants.USER_ID == 0) {
-            spinner_class.setVisibility(View.VISIBLE);
-            fab.setVisibility(View.VISIBLE);
-        } else if (Constants.USER_ID == 2) {
-            spinner_class.setVisibility(View.GONE);
-            fab.setVisibility(View.GONE);
+        JSONObject jsonObject = null;
+        try {
+            if (sharedpreferences.getString("role_name","").contentEquals("Teacher")) {
+                spinner_class.setVisibility(View.VISIBLE);
+                fab.setVisibility(View.VISIBLE);
+            } else if (sharedpreferences.getString("role_name","").contentEquals("Student")) {
+                spinner_class.setVisibility(View.GONE);
+                fab.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

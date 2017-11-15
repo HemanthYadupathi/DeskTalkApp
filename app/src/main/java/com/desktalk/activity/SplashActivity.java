@@ -31,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 // Run next activity
                 Intent intent = new Intent();
-                intent.setClass(sPlashScreen, DashboardActivity.class);
+                intent.setClass(sPlashScreen, LoginActivity.class);
                 startActivity(intent);
             }
         };

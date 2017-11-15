@@ -13,11 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import com.activity.desktalkapp.R;
 import com.desktalk.activity.DashboardActivity;
 import com.desktalk.activity.EditProfileActivity;
 import com.desktalk.activity.ProfileActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +40,9 @@ public class ProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private TextView prof_Fname,prof_Mname,prof_DOB,prof_BG,prof_Mnumber,prof_Address,prof_Hobby,prof_Skill;
+    private SharedPreferences sharedpreferences;
+    Editor editor;
     private OnFragmentInteractionListener mListener;
 
     Toolbar mToolbar;
@@ -75,6 +81,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        sharedpreferences = getActivity().getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE); //1
+        editor = sharedpreferences.edit();
+
         View rootView = inflater.inflate(R.layout.activity_profile, container, false);
         mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
 
@@ -105,6 +115,64 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+
+        prof_Fname=(TextView) rootView.findViewById(R.id.prof_Fname);
+        prof_Mname=(TextView) rootView.findViewById(R.id.prof_Mname);
+        prof_DOB=(TextView) rootView.findViewById(R.id.prof_DOB);
+        prof_BG=(TextView) rootView.findViewById(R.id.prof_BG);
+        prof_Mnumber=(TextView) rootView.findViewById(R.id.prof_Mnumber);
+        prof_Address=(TextView) rootView.findViewById(R.id.prof_Address);
+        prof_Hobby=(TextView) rootView.findViewById(R.id.prof_Hobby);
+        prof_Skill=(TextView) rootView.findViewById(R.id.prof_Skill);
+
+        try {
+            if(new JSONObject(sharedpreferences.getString("Log_User_Deatils","")).has("userdata")) {
+                JSONObject userdata = new JSONObject(sharedpreferences.getString("Log_User_Deatils", "")).getJSONObject("userdata");
+                if (userdata.has("father_name")) {
+                    prof_Fname.setText(userdata.getString("father_name"));
+                } else {
+                    prof_Fname.setText(" -- ");
+                }
+                if (userdata.has("mother_name")) {
+                    prof_Mname.setText(userdata.getString("mother_name"));
+                } else {
+                    prof_Mname.setText(" -- ");
+                }
+                if (userdata.has("date_of_birth")) {
+                    prof_DOB.setText(userdata.getString("date_of_birth"));
+                } else {
+                    prof_DOB.setText(" -- ");
+                }
+                if (userdata.has("blood_group")) {
+                    prof_BG.setText(userdata.getString("blood_group"));
+                } else {
+                    prof_BG.setText(" -- ");
+                }
+                if (userdata.has("mobile")) {
+                    prof_Mnumber.setText(userdata.getString("mobile"));
+                } else {
+                    prof_Mnumber.setText(" -- ");
+                }
+                if (userdata.has("address")) {
+                    prof_Address.setText(userdata.getString("address"));
+                } else {
+                    prof_Address.setText(" -- ");
+                }
+                if (userdata.has("hobbies")) {
+                    prof_Hobby.setText(userdata.getString("hobbies").replace(",","\n"));
+                } else {
+                    prof_Hobby.setText(" -- ");
+                }
+                if (userdata.has("skills")) {
+                    prof_Skill.setText(userdata.getString("skills").replace(",","\n"));
+                } else {
+                    prof_Skill.setText(" -- ");
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
         return rootView;
     }

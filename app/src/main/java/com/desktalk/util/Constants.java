@@ -1,5 +1,7 @@
 package com.desktalk.util;
 
+import com.desktalk.LoginRequestModel;
+
 /**
  * Created by User on 10/10/2017.
  */

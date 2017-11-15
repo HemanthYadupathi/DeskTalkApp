@@ -1,17 +1,21 @@
 package com.desktalk.activity;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +26,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.Apis;
+import com.desktalk.Connectivity;
+import com.desktalk.LoginRequestModel;
 import com.desktalk.util.Constants;
+import com.google.gson.JsonElement;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 
 /**
  * A login screen that offers login via email/password.
@@ -33,8 +59,14 @@ public class LoginActivity extends AppCompatActivity {
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    private static final int REQUEST_ACCESS_NETWORK_STATE = 0;
 
-
+    String[] permissionArray;
+    ArrayList<String> stringArrayList;
+    int permissionPos = 0;
+    private static final int INITIAL_PERMISSION_REQUESTCODE = 0;
+    private SharedPreferences sharedpreferences;
+    Editor editor;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -58,6 +90,10 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
+        sharedpreferences = getApplicationContext().getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE); //1
+        editor = sharedpreferences.edit();
+//        runTimepermission();
+
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -74,7 +110,32 @@ public class LoginActivity extends AppCompatActivity {
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                boolean cancel = false;
+                View focusView = null;
+
+                if (Connectivity.isConnected(getApplicationContext())) {
+                    if (!TextUtils.isEmpty(mEmailView.getText().toString()) && !TextUtils.isEmpty(mPasswordView.getText().toString())) {
+                        login(mEmailView.getText().toString(), mPasswordView.getText().toString());
+                    } else {
+                        if (TextUtils.isEmpty(mEmailView.getText().toString())) {
+                            mEmailView.setError(getString(R.string.error_field_required));
+                            focusView = mEmailView;
+                            cancel = true;
+                        } else if (TextUtils.isEmpty(mPasswordView.getText().toString())) {
+                            mPasswordView.setError(getString(R.string.error_field_required));
+                            focusView = mPasswordView;
+                            cancel = true;
+                        }
+                        if (cancel) {
+                            // There was an error; don't attempt login and focus the first
+                            // form field with an error.
+                            focusView.requestFocus();
+                        }
+                    }
+                } else {
+
+                }
+//                attemptLogin();
             }
         });
 
@@ -113,7 +174,59 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void login(String user, String password) {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        OkHttpClient client = httpClient.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://www.desktalk.in/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
 
+        LoginRequestModel loginRequestModel = new LoginRequestModel();
+
+        loginRequestModel.setUsername(user);
+        loginRequestModel.setPassword(password);
+
+        Apis mInterfaceService = retrofit.create(Apis.class);
+        Call<JsonElement> mService = mInterfaceService.Authenticate(loginRequestModel);
+        mService.enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response1) {
+                if (response1.body() != null) {
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(response1.body().toString());
+                        if (String.valueOf(jsonObject.get("result")).contentEquals("Success")) {
+                            if (!String.valueOf(jsonObject.getJSONObject("userdata").get("role_name")).contentEquals("Admin")) {
+
+                                editor = sharedpreferences.edit();
+                                editor.putString("Log_User_Deatils", response1.body().toString());
+                                editor.putString("role_name", String.valueOf(jsonObject.getJSONObject("userdata").get("role_name")));
+                                editor.commit();
+
+                                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                                intent.putExtra("userID", userID);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Admin Not yet Implemented", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonElement> call, Throwable t) {
+
+            }
+
+        });
+    }
 
     /*private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -141,7 +254,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Callback received when a permissions request has been completed.
      */
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
@@ -149,7 +262,12 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         }
-    }
+        if (requestCode == REQUEST_ACCESS_NETWORK_STATE) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            }
+        }
+    }*/
 
 
     /**
@@ -322,5 +440,63 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
         }
     }
+  /*  private boolean runTimepermission() {
+        *//*{}*//*
+        stringArrayList = new ArrayList<String>();
+        permissionArray = new String[]{};
+        boolean isPermissionRequired = false;
+
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED)) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(
+                        Manifest.permission.INTERNET)) {
+
+                }
+            }
+            stringArrayList.add(Manifest.permission.INTERNET);
+            permissionPos = permissionPos + 1;
+            isPermissionRequired = true;
+        }
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED)) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                }
+            }
+            stringArrayList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            permissionPos = permissionPos + 1;
+            isPermissionRequired = true;
+        }
+       *//* if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) && ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED))) {
+
+
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+            }
+
+            stringArrayList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            permissionPos = permissionPos + 1;
+            isPermissionRequired = true;
+        }
+*//*
+
+        String[] permissionArray = stringArrayList.toArray(new String[permissionPos]);
+        if (isPermissionRequired) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(permissionArray,
+                        INITIAL_PERMISSION_REQUESTCODE);
+            }
+        }
+        return isPermissionRequired;
+    }*/
+
 }
 

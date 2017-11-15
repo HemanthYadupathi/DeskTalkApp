@@ -1,6 +1,8 @@
 package com.desktalk.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -22,6 +24,9 @@ import com.desktalk.fragment.HomeFragment;
 import com.desktalk.fragment.ProfileFragment;
 import com.desktalk.util.Constants;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
         AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
@@ -29,8 +34,9 @@ public class DashboardActivity extends AppCompatActivity
     int int_value = 0;
     int selected_ID = 0;
     private NavigationView navigationView;
-    ;
     private DrawerLayout drawer;
+    private SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
 
 
 
@@ -38,6 +44,10 @@ public class DashboardActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        sharedpreferences = getApplicationContext().getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE); //1
+        editor = sharedpreferences.edit();
+
 
         if (savedInstanceState == null) {
             Fragment fragment = null;
@@ -68,17 +78,21 @@ public class DashboardActivity extends AppCompatActivity
             }
         });
         navigationView.setCheckedItem(R.id.nav_home);
-        int userID = getIntent().getIntExtra("userID", 0);
-        if (Constants.USER_ID == 0) {
-            selected_ID = 0;
-            addTeacherMenuInNavMenuDrawer();
-        } else if (Constants.USER_ID == 1) {
-            selected_ID = 1;
-            addParentMenuInNavMenuDrawer();
-        } else if (Constants.USER_ID == 2) {
-            selected_ID = 2;
-            addStudentMenuInNavMenuDrawer();
+        try {
+            if (sharedpreferences.getString("role_name","").contentEquals("Teacher")) {
+                selected_ID = 0;
+                addTeacherMenuInNavMenuDrawer();
+            } else if (sharedpreferences.getString("role_name","").contentEquals("Parent")) {
+                selected_ID = 1;
+                addParentMenuInNavMenuDrawer();
+            } else if (sharedpreferences.getString("role_name","").contentEquals("Student")) {
+                selected_ID = 2;
+                addStudentMenuInNavMenuDrawer();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     public void setToolbar(Toolbar toolbar, String title) {
