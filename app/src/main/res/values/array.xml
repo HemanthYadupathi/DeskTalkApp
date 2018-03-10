@@ -6,8 +6,13 @@
         <item>Female</item>
     </string-array>
     <string-array name="classes">
-        <item>Class 1</item>
-        <item>Class 2</item>
-        <item>Class 3</item>
+        <item>LKG A</item>
+        <item>LKG B</item>
     </string-array>
+    <string-array name="attendancestatus">
+        <item>Unknown</item>
+        <item>Present</item>
+        <item>Absent</item>
+    </string-array>
+
 </resources>

@@ -9,4 +9,7 @@
     <color name="colorBlackLight">#434343</color>
     <color name="colorGreyNonEdit">#686767</color>
 
+    <color name="colorTimetableSub">#FFEFECEC</color>
+    <color name="colorGreenPresent">#8bc34a</color>
+    <color name="colorRedAbsent">#fb5144</color>
 </resources>

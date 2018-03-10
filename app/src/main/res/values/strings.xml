@@ -42,6 +42,10 @@
     <string name="str_add">Add</string>
     <string name="prompt_schoolname">School Name</string>
     <string name="copyright_message">Copyright © 2017 Leidenschaft Industries Pvt Ltd, All rights reserved.</string>
+    <string name="check_connection">Oops!! Check your internet connection</string>
+    <string name="mark_attendance">Mark Attendance</string>
+    <string name="attendance_history">Attendance History</string>
+    <string name="select_classes">Select Classes</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>

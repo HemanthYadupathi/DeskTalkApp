@@ -14,23 +14,24 @@
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:background="@mipmap/ic_launcher" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/boy"
+        android:paddingTop="@dimen/nav_header_vertical_spacing" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
         android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <TextView
+            android:id="@+id/text_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:text="Android Studio"
+            android:text="Fannie Hunt"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
         <TextView
@@ -43,12 +44,12 @@
             android:text="Online"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-        <TextView
+        <!--<TextView
             android:id="@+id/textViewEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Edit Profile"
-            android:textAppearance="@style/TextAppearance.AppCompat" />
+            android:textAppearance="@style/TextAppearance.AppCompat" />-->
     </LinearLayout>
 </LinearLayout>

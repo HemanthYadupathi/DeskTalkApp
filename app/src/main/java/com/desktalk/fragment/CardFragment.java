@@ -36,18 +36,6 @@ public class CardFragment extends Fragment {
         cardView = (CardView) view.findViewById(R.id.cardView);
         cardView.setMaxCardElevation(cardView.getCardElevation() * CardAdapter.MAX_ELEVATION_FACTOR);
 
-//        TextView title = (TextView) view.findViewById(R.id.title);
-//        Button button = (Button)view.findViewById(R.id.button);
-//
-//        title.setText(String.format("Card %d", getArguments().getInt("position")));
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(getActivity(), "Button in Card " + getArguments().getInt("position")
-//                        + "Clicked!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         return view;
     }
 

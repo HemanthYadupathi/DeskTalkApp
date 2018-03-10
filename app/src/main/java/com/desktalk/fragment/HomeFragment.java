@@ -3,8 +3,10 @@ package com.desktalk.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.adapter.CardFragmentPagerAdapter;
+import com.desktalk.util.Constants;
 import com.desktalk.util.ShadowTransformer;
 import com.desktalk.activity.DashboardActivity;
 import com.github.mikephil.charting.charts.BarChart;
@@ -24,6 +27,8 @@ import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +50,11 @@ public class HomeFragment extends Fragment {
     BarData data;
     private OnFragmentInteractionListener mListener;
 
-    Toolbar mToolbar;
+    private Toolbar mToolbar;
+    private ViewPager viewPager;
+    private Timer timer;
+    private int currentPage = 0;
+
 
     public HomeFragment() {
         // Required empty public constructor
@@ -84,7 +93,7 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        viewPager = (ViewPager) view.findViewById(R.id.viewPager);
 
         CardFragmentPagerAdapter pagerAdapter = new CardFragmentPagerAdapter(getActivity().getSupportFragmentManager(), dpToPixels(2, getActivity()));
         ShadowTransformer fragmentCardShadowTransformer = new ShadowTransformer(viewPager, pagerAdapter);
@@ -94,73 +103,103 @@ public class HomeFragment extends Fragment {
         viewPager.setPageTransformer(false, fragmentCardShadowTransformer);
         viewPager.setOffscreenPageLimit(3);
 
+        if (Constants.USER_ID == Constants.USER_TEACHER) {
+            view.findViewById(R.id.card_view_timetable).setVisibility(View.GONE);
+            view.findViewById(R.id.card_view_stdAttendence).setVisibility(View.GONE);
+            view.findViewById(R.id.card_view_stdPerformance).setVisibility(View.GONE);
+        } else {
+            BarChart barChart = (BarChart) view.findViewById(R.id.barchart);
 
-        BarChart barChart = (BarChart) view.findViewById(R.id.barchart);
-
-        ArrayList<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(8f, 0));
-        entries.add(new BarEntry(2f, 1));
-        entries.add(new BarEntry(5f, 2));
-        entries.add(new BarEntry(20f, 3));
-        entries.add(new BarEntry(30f, 4));
-        entries.add(new BarEntry(19f, 5));
-        entries.add(new BarEntry(2f, 6));
-        entries.add(new BarEntry(5f, 7));
-        entries.add(new BarEntry(20f, 8));
-        entries.add(new BarEntry(15f, 9));
-        entries.add(new BarEntry(19f, 10));
+            ArrayList<BarEntry> entries = new ArrayList<>();
+            entries.add(new BarEntry(8f, 0));
+            entries.add(new BarEntry(2f, 1));
+            entries.add(new BarEntry(5f, 2));
+            entries.add(new BarEntry(20f, 3));
+            entries.add(new BarEntry(30f, 4));
+            entries.add(new BarEntry(19f, 5));
+            entries.add(new BarEntry(2f, 6));
+            entries.add(new BarEntry(5f, 7));
+            entries.add(new BarEntry(20f, 8));
+            entries.add(new BarEntry(15f, 9));
+            entries.add(new BarEntry(19f, 10));
 
 
-        BarDataSet bardataset = new BarDataSet(entries, "Cells");
+            BarDataSet bardataset = new BarDataSet(entries, "Cells");
 
-        ArrayList<String> labels = new ArrayList<String>();
-        labels.add("Jan");
-        labels.add("Feb");
-        labels.add("Mar");
-        labels.add("Apr");
-        labels.add("May");
-        labels.add("Jun");
-        labels.add("Jul");
-        labels.add("Aug");
-        labels.add("Sep");
-        labels.add("Oct");
-        labels.add("Nov");
+            ArrayList<String> labels = new ArrayList<String>();
+            labels.add("Jan");
+            labels.add("Feb");
+            labels.add("Mar");
+            labels.add("Apr");
+            labels.add("May");
+            labels.add("Jun");
+            labels.add("Jul");
+            labels.add("Aug");
+            labels.add("Sep");
+            labels.add("Oct");
+            labels.add("Nov");
 
-        data = new BarData(labels, bardataset);
-        barChart.setData(data); // set the data and list of lables into chart
-        barChart.setDescription(" ");  // set the description
-        barChart.setScaleXEnabled(true);
-        barChart.setScaleYEnabled(false);
-        barChart.setExtraBottomOffset(10);
-        barChart.animateXY(0, 1000);
-        barChart.setPinchZoom(false);
-        barChart.getLegend().setEnabled(false);
+            data = new BarData(labels, bardataset);
+            barChart.setData(data); // set the data and list of lables into chart
+            barChart.setDescription(" ");  // set the description
+            barChart.setScaleXEnabled(true);
+            barChart.setScaleYEnabled(false);
+            barChart.setExtraBottomOffset(10);
+            barChart.animateXY(0, 1000);
+            barChart.setPinchZoom(false);
+            barChart.getLegend().setEnabled(false);
 //        barChart.getXAxis().setTextSize(7f);
 
 
+            XAxis xAxis = barChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.TOP);
+            barChart.isDrawValueAboveBarEnabled();//returns true or false
 
-        XAxis xAxis = barChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.TOP);
-        barChart.isDrawValueAboveBarEnabled();//returns true or false
+            YAxis yAxisLeft = barChart.getAxisLeft();
+            yAxisLeft.setValueFormatter(new YAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, YAxis yAxis) {
+                    return Math.round(value) + "";
+                }
+            });
 
-        YAxis yAxisLeft = barChart.getAxisLeft();
-        yAxisLeft.setValueFormatter(new YAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, YAxis yAxis) {
-                return Math.round(value) + "";
-            }
-        });
+            YAxis yAxisRight = barChart.getAxisRight();
+            yAxisRight.setEnabled(false);
 
-        YAxis yAxisRight = barChart.getAxisRight();
-        yAxisRight.setEnabled(false);
+            bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
 
-        bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
+            barChart.animateY(5000);
 
-        barChart.animateY(5000);
-
-
+        }
         ((DashboardActivity) getActivity()).setToolbar(mToolbar, "DeskTalk");
+
+        setupAutoPager();
         return view;
+    }
+
+    private void setupAutoPager() {
+        final Handler handler = new Handler();
+
+        final Runnable update = new Runnable() {
+            public void run() {
+
+                viewPager.setCurrentItem(currentPage, true);
+                if (currentPage == 4) {
+                    currentPage = 0;
+                } else {
+                    ++currentPage;
+                }
+            }
+        };
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                handler.post(update);
+            }
+        }, 500, 2000);
     }
 
     public static float dpToPixels(int dp, Context context) {

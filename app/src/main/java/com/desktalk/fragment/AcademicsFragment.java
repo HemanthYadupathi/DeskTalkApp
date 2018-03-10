@@ -1,6 +1,5 @@
 package com.desktalk.fragment;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,11 +27,6 @@ import com.desktalk.activity.DashboardActivity;
 import com.desktalk.adapter.ViewPagerAdapter;
 import com.desktalk.util.Constants;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -44,17 +39,10 @@ import java.io.InputStream;
  * create an instance of this fragment.
  */
 public class AcademicsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     ImageView choosen_image;
     TextView no_file_choosen;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
 
@@ -76,28 +64,19 @@ public class AcademicsFragment extends Fragment {
     public static AcademicsFragment newInstance(String param1, String param2) {
         Log.d(param1, param2);
         AcademicsFragment fragment = new AcademicsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        sharedpreferences = getContext().getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE); //1
+        sharedpreferences = getContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE); //1
         editor = sharedpreferences.edit();
 
         // Inflate the layout for this fragment
@@ -112,24 +91,21 @@ public class AcademicsFragment extends Fragment {
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_academics_fab);
         AppCompatSpinner spinner_class = (AppCompatSpinner) rootView.findViewById(R.id.spinner_class);
         fab.bringToFront();
-        JSONObject jsonObject = null;
-        try {
-            if (sharedpreferences.getString("role_name","").contentEquals("Teacher")) {
-                spinner_class.setVisibility(View.VISIBLE);
-                fab.setVisibility(View.VISIBLE);
-            } else if (sharedpreferences.getString("role_name","").contentEquals("Student")) {
-                spinner_class.setVisibility(View.GONE);
-                fab.setVisibility(View.GONE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (Constants.USER_ID == Constants.USER_TEACHER) {
+            spinner_class.setVisibility(View.VISIBLE);
+            fab.setVisibility(View.VISIBLE);
+        } else {
+            spinner_class.setVisibility(View.GONE);
+            fab.setVisibility(View.GONE);
         }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Dialog dialog = new Dialog(getContext());
-                dialog.setContentView(R.layout.add_academics_info);
-                dialog.setTitle("Title...");
+                final AlertDialog.Builder dialodView = new AlertDialog.Builder(getActivity());
+                View dialog = getActivity().getLayoutInflater().inflate(R.layout.add_academics_info, null);
+                dialodView.setView(dialog);
                 Button add_images = (Button) dialog.findViewById(R.id.add_images);
                 choosen_image = (ImageView) dialog.findViewById(R.id.choosen_image);
                 no_file_choosen = (TextView) dialog.findViewById(R.id.no_file_choosen);
@@ -141,17 +117,9 @@ public class AcademicsFragment extends Fragment {
                         startActivityForResult(photoPickerIntent, 1);
                     }
                 });
-                // set the custom dialog components - text, image and button
-                /*ImageView dialogButton = (ImageView) dialog.findViewById(R.id.dialogButtonOK);
-                // if button is clicked, close the custom dialog
-                dialogButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });*/
 
-                dialog.show();
+                final AlertDialog alertDialog = dialodView.create();
+                alertDialog.show();
             }
         });
 

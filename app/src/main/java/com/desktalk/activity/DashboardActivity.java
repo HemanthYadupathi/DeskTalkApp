@@ -20,16 +20,16 @@ import android.widget.TextView;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.fragment.AcademicsFragment;
+import com.desktalk.fragment.AttendanceFragment;
+import com.desktalk.fragment.AttendanceHistoryFragment;
+import com.desktalk.fragment.AttendanceMainFragment;
 import com.desktalk.fragment.HomeFragment;
 import com.desktalk.fragment.ProfileFragment;
 import com.desktalk.util.Constants;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
-        AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
+        AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AttendanceMainFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, AttendanceHistoryFragment.OnListFragmentInteractionListener {
 
     int int_value = 0;
     int selected_ID = 0;
@@ -39,13 +39,12 @@ public class DashboardActivity extends AppCompatActivity
     SharedPreferences.Editor editor;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        sharedpreferences = getApplicationContext().getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE); //1
+        sharedpreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE); //1
         editor = sharedpreferences.edit();
 
 
@@ -67,7 +66,7 @@ public class DashboardActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView.setNavigationItemSelectedListener(this);
         View headerview = navigationView.getHeaderView(0);
-        TextView profilename = (TextView) headerview.findViewById(R.id.textViewEdit);
+        /*TextView profilename = (TextView) headerview.findViewById(R.id.textViewEdit);
 
         profilename.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,22 +75,19 @@ public class DashboardActivity extends AppCompatActivity
                 Intent intent = new Intent(DashboardActivity.this, EditProfileActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
         navigationView.setCheckedItem(R.id.nav_home);
-        try {
-            if (sharedpreferences.getString("role_name","").contentEquals("Teacher")) {
-                selected_ID = 0;
-                addTeacherMenuInNavMenuDrawer();
-            } else if (sharedpreferences.getString("role_name","").contentEquals("Parent")) {
-                selected_ID = 1;
-                addParentMenuInNavMenuDrawer();
-            } else if (sharedpreferences.getString("role_name","").contentEquals("Student")) {
-                selected_ID = 2;
-                addStudentMenuInNavMenuDrawer();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (Constants.USER_ID == Constants.USER_TEACHER) {
+            selected_ID = 0;
+            addTeacherMenuInNavMenuDrawer();
+        } else if (Constants.USER_ID == Constants.USER_PARENT) {
+            selected_ID = 1;
+            addParentMenuInNavMenuDrawer();
+        } else if (Constants.USER_ID == Constants.USER_STUDENT) {
+            selected_ID = 2;
+            addStudentMenuInNavMenuDrawer();
         }
+
 
     }
 
@@ -216,16 +212,17 @@ public class DashboardActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             fragmentClass = HomeFragment.class;
         } else if (id == R.id.nav_profile) {
-            /*Intent intent = new Intent(DashboardActivity.this, ProfileActivity.class);
-            *//*Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(DashboardActivity.this,
-                    android.R.anim.fade_in, android.R.anim.fade_out).toBundle();*//*
-            startActivity(intent);
-            overridePendingTransition(0, 0);*/
             fragmentClass = ProfileFragment.class;
 
         } else if (id == R.id.nav_academics) {
             fragmentClass = AcademicsFragment.class;
-//            fab.setImageResource(android.R.drawable.ic_input_add);
+        } else if (id == Constants.NAV_MENU_ITEM_ATTENDENCE) {
+            fragmentClass = AttendanceMainFragment.class;
+        } else if (id == Constants.NAV_MENU_ITEM_STD_PERFORMANCE) {
+            startActivity(new Intent(DashboardActivity.this, BusTrackMapActivity.class));
+        } else if (id == Constants.NAV_MENU_ITEM_BUSTRACK) {
+            //TODO: Implement
+            //startActivity(new Intent(DashboardActivity.this, BusTrackMapActivity.class));
         }
 
         try {
@@ -238,7 +235,7 @@ public class DashboardActivity extends AppCompatActivity
             Bundle arguments = new Bundle();
             arguments.putInt("selected_ID", selected_ID);
             fragment.setArguments(arguments);
-            fragmentManager.beginTransaction().replace(R.id.main_framelayout, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.main_framelayout, fragment).addToBackStack(null).commit();
         }
 
 
@@ -250,4 +247,5 @@ public class DashboardActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 }

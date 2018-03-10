@@ -1,18 +1,16 @@
 package com.desktalk.activity;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,26 +18,24 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
-import com.desktalk.Apis;
-import com.desktalk.Connectivity;
-import com.desktalk.LoginRequestModel;
+import com.desktalk.util.Apis;
+import com.desktalk.util.Connectivity;
 import com.desktalk.util.Constants;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import java.util.Map;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -48,29 +44,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.Manifest.permission.ACCESS_NETWORK_STATE;
-
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-    private static final int REQUEST_ACCESS_NETWORK_STATE = 0;
 
-    String[] permissionArray;
-    ArrayList<String> stringArrayList;
-    int permissionPos = 0;
-    private static final int INITIAL_PERMISSION_REQUESTCODE = 0;
     private SharedPreferences sharedpreferences;
-    Editor editor;
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
+    private Editor editor;
 
     // UI references.
     private EditText mEmailView;
@@ -78,28 +59,36 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private TextView mTextViewForgotPwd;
-    private int userID = 0;
+    private final String TAG = LoginActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Log.e(TAG, Constants.getDate());
         // Set up the login form.
         mEmailView = (EditText) findViewById(R.id.email);
         mTextViewForgotPwd = (TextView) findViewById(R.id.textForgotPwd);
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        sharedpreferences = getApplicationContext().getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE); //1
+        sharedpreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE); //1
         editor = sharedpreferences.edit();
-//        runTimepermission();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if ((keyEvent != null && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (id == EditorInfo.IME_ACTION_DONE)) {
-                    attemptLogin();
+                    if (Connectivity.isConnected(getApplicationContext())) {
+                        showProgress(true);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                        login(mEmailView.getText().toString(), mPasswordView.getText().toString());
+                    } else {
+                        Snackbar.make(textView, getString(R.string.check_connection), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
                     return true;
                 }
                 return false;
@@ -113,36 +102,38 @@ public class LoginActivity extends AppCompatActivity {
                 boolean cancel = false;
                 View focusView = null;
 
-                if (Connectivity.isConnected(getApplicationContext())) {
-                    if (!TextUtils.isEmpty(mEmailView.getText().toString()) && !TextUtils.isEmpty(mPasswordView.getText().toString())) {
+                if (!TextUtils.isEmpty(mEmailView.getText().toString()) && !TextUtils.isEmpty(mPasswordView.getText().toString())) {
+                    if (Connectivity.isConnected(getApplicationContext())) {
+                        showProgress(true);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         login(mEmailView.getText().toString(), mPasswordView.getText().toString());
                     } else {
-                        if (TextUtils.isEmpty(mEmailView.getText().toString())) {
-                            mEmailView.setError(getString(R.string.error_field_required));
-                            focusView = mEmailView;
-                            cancel = true;
-                        } else if (TextUtils.isEmpty(mPasswordView.getText().toString())) {
-                            mPasswordView.setError(getString(R.string.error_field_required));
-                            focusView = mPasswordView;
-                            cancel = true;
-                        }
-                        if (cancel) {
-                            // There was an error; don't attempt login and focus the first
-                            // form field with an error.
-                            focusView.requestFocus();
-                        }
+                        Snackbar.make(view, getString(R.string.check_connection), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
                     }
                 } else {
-
+                    if (TextUtils.isEmpty(mEmailView.getText().toString())) {
+                        mEmailView.setError(getString(R.string.error_field_required));
+                        focusView = mEmailView;
+                        cancel = true;
+                    } else if (TextUtils.isEmpty(mPasswordView.getText().toString())) {
+                        mPasswordView.setError(getString(R.string.error_field_required));
+                        focusView = mPasswordView;
+                        cancel = true;
+                    }
+                    if (cancel) {
+                        focusView.requestFocus();
+                    }
                 }
-//                attemptLogin();
+
             }
         });
 
         mTextViewForgotPwd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog.Builder pwdDialog = new AlertDialog.Builder(LoginActivity.this);
+                /*final AlertDialog.Builder pwdDialog = new AlertDialog.Builder(LoginActivity.this);
                 View dialodView = getLayoutInflater().inflate(R.layout.dialog_forgotpwd, null);
                 pwdDialog.setView(dialodView);
                 pwdDialog.setCancelable(false);
@@ -168,173 +159,101 @@ public class LoginActivity extends AppCompatActivity {
                         alertDialog.dismiss();
                     }
                 });
-
+*/
             }
         });
 
     }
 
-    private void login(String user, String password) {
+    private void login(final String user, final String password) {
+
+        Gson gson = new GsonBuilder().setLenient().create();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://www.desktalk.in/api/")
-                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(Constants.BASE_URL)
                 .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
+        final String android_id = Settings.Secure.getString(LoginActivity.this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        Map<String, String> requestBodyMap = new HashMap<>();
 
-        LoginRequestModel loginRequestModel = new LoginRequestModel();
-
-        loginRequestModel.setUsername(user);
-        loginRequestModel.setPassword(password);
+        requestBodyMap.put("username", String.valueOf(user));
+        requestBodyMap.put("password", String.valueOf(password));
+        requestBodyMap.put("devicetoken", android_id);
 
         Apis mInterfaceService = retrofit.create(Apis.class);
-        Call<JsonElement> mService = mInterfaceService.Authenticate(loginRequestModel);
+        Call<JsonElement> mService = mInterfaceService.Authenticate(requestBodyMap);
         mService.enqueue(new Callback<JsonElement>() {
             @Override
             public void onResponse(Call<JsonElement> call, Response<JsonElement> response1) {
-                if (response1.body() != null) {
+                showProgress(false);
+                if (response1.code() == 200) {
+                    if (response1.body() != null) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response1.body().toString());
+                            if (String.valueOf(jsonObject.get("status")).contentEquals("success")) {
+                                if (String.valueOf(jsonObject.getJSONObject("response").get("role")).contentEquals("4")
+                                        || String.valueOf(jsonObject.getJSONObject("response").get("role")).contentEquals("6")
+                                        || String.valueOf(jsonObject.getJSONObject("response").get("role")).contentEquals("7")) {
 
-                    try {
-                        JSONObject jsonObject = new JSONObject(response1.body().toString());
-                        if (String.valueOf(jsonObject.get("result")).contentEquals("Success")) {
-                            if (!String.valueOf(jsonObject.getJSONObject("userdata").get("role_name")).contentEquals("Admin")) {
+                                    editor = sharedpreferences.edit();
+                                    editor.putString(Constants.PREFERENCE_KEY_USERDATA, String.valueOf(jsonObject.getJSONObject("response")));
+                                    editor.putString(Constants.PREFERENCE_KEY_TOKEN, String.valueOf(jsonObject.getJSONObject("response").get("token")));
+                                    editor.putString(Constants.PREFERENCE_KEY_USER_NAME, user);
+                                    editor.putString(Constants.PREFERENCE_KEY_USER_PWD, password);
+                                    editor.putString(Constants.PREFERENCE_KEY_DEVICE_TOKEN,android_id );
+                                    editor.commit();
+                                    editor.apply();
 
-                                editor = sharedpreferences.edit();
-                                editor.putString("Log_User_Deatils", response1.body().toString());
-                                editor.putString("role_name", String.valueOf(jsonObject.getJSONObject("userdata").get("role_name")));
-                                editor.commit();
+                                    if (String.valueOf(jsonObject.getJSONObject("response").get("role")).contentEquals("4")) {
+                                        Constants.USER_ID = Constants.USER_TEACHER;
+                                    } else if (String.valueOf(jsonObject.getJSONObject("response").get("role")).contentEquals("6")) {
+                                        Constants.USER_ID = Constants.USER_PARENT;
+                                    } else if (String.valueOf(jsonObject.getJSONObject("response").get("role")).contentEquals("7")) {
+                                        Constants.USER_ID = Constants.USER_ATTENDER;
+                                    }
+                                    Toast.makeText(LoginActivity.this, "Login Success", Toast.LENGTH_SHORT).show();
 
-                                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                                intent.putExtra("userID", userID);
-                                startActivity(intent);
+                                    finish();
+                                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                                    startActivity(intent);
+                                    /*if (Constants.USER_ID == Constants.USER_ATTENDER || Constants.USER_ID == Constants.USER_TEACHER) {
+                                        Intent intent = new Intent(LoginActivity.this, AttendanceMainActivity.class);
+                                        startActivity(intent);
+                                    } else if (Constants.USER_ID == Constants.USER_PARENT) {
+                                        Intent intent = new Intent(LoginActivity.this, BusTrackMapActivity.class);
+                                        startActivity(intent);
+                                    }*/
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "Sorry, App doesn't support for this User", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                Toast.makeText(LoginActivity.this, "Admin Not yet Implemented", Toast.LENGTH_SHORT).show();
+                                showProgress(false);
+                                Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            showProgress(false);
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Error logging, please try again", Toast.LENGTH_SHORT).show();
                     }
+                } else if (response1.code() == 400) {
+                    Toast.makeText(LoginActivity.this, "Invalid username/password, please try again", Toast.LENGTH_SHORT).show();
+                } else if (response1.code() == 402) {
+                    Toast.makeText(LoginActivity.this, "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<JsonElement> call, Throwable t) {
-
+                showProgress(false);
+                Toast.makeText(LoginActivity.this, "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
             }
 
         });
-    }
-
-    /*private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-*/
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            }
-        }
-        if (requestCode == REQUEST_ACCESS_NETWORK_STATE) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            }
-        }
-    }*/
-
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_field_required));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-        /*else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }*/
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-        }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() >= 4;
     }
 
     /**
@@ -372,131 +291,6 @@ public class LoginActivity extends AppCompatActivity {
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            if (mEmail.contentEquals("demo") && mPassword.contentEquals("demo")) {
-//                userID = 0;
-                Constants.USER_ID = 0;
-                return true;
-            } else if (mEmail.contentEquals("pdemo") && mPassword.contentEquals("demo")) {
-                userID = 1;
-                Constants.USER_ID = 1;
-                return true;
-            } else if (mEmail.contentEquals("sdemo") && mPassword.contentEquals("demo")) {
-                userID = 2;
-                Constants.USER_ID = 2;
-                return true;
-            }
-
-
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
-                finish();
-                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                intent.putExtra("userID", userID);
-                startActivity(intent);
-
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
-  /*  private boolean runTimepermission() {
-        *//*{}*//*
-        stringArrayList = new ArrayList<String>();
-        permissionArray = new String[]{};
-        boolean isPermissionRequired = false;
-
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
-                != PackageManager.PERMISSION_GRANTED)) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(
-                        Manifest.permission.INTERNET)) {
-
-                }
-            }
-            stringArrayList.add(Manifest.permission.INTERNET);
-            permissionPos = permissionPos + 1;
-            isPermissionRequired = true;
-        }
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED)) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-                }
-            }
-            stringArrayList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            permissionPos = permissionPos + 1;
-            isPermissionRequired = true;
-        }
-       *//* if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) && ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED))) {
-
-
-            if (shouldShowRequestPermissionRationale(
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-            }
-
-            stringArrayList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-            permissionPos = permissionPos + 1;
-            isPermissionRequired = true;
-        }
-*//*
-
-        String[] permissionArray = stringArrayList.toArray(new String[permissionPos]);
-        if (isPermissionRequired) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(permissionArray,
-                        INITIAL_PERMISSION_REQUESTCODE);
-            }
-        }
-        return isPermissionRequired;
-    }*/
 
 }
 

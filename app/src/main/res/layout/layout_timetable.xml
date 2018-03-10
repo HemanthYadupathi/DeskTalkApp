@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="2">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <!--<TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="9.30AM TO \n 10.15AM"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorWhite" />-->
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="1" />
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="9.30AM TO \n 10.15AM" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="2" />
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="10.15 TO \n 11.00" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_break_width"
+            android:layout_height="@dimen/layout_timetable_break_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorGreyNonEdit"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="bottom"
+                android:text="B1"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="3" />
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="11.20 TO \n 12.05" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="4" />
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="12.05 TO \n 12.50" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_break_width"
+            android:layout_height="@dimen/layout_timetable_break_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorGreyNonEdit"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="bottom"
+                android:text="B2"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="5" />
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="13.30 TO \n 14.15" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="6" />
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="14.15 TO \n 15.00" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="7" />
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="15.00 TO \n 15.45" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="8" />
+
+            <TextView
+                style="@style/TimeTableTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="15.45 TO \n 16.30" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorMainApp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Monday"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorTimetableSub"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="English" />
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Joise" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorTimetableSub"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Kannada" />
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ruby" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_break_width"
+            android:layout_height="@dimen/layout_timetable_break_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorGreyNonEdit"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorTimetableSub"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Kannada" />
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ruby" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorTimetableSub"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Kannada" />
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ruby" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_break_width"
+            android:layout_height="@dimen/layout_timetable_break_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorGreyNonEdit"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorTimetableSub"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Kannada" />
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ruby" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorTimetableSub"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Kannada" />
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ruby" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorTimetableSub"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Kannada" />
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ruby" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/layout_timetable_width"
+            android:layout_height="@dimen/layout_timetable_height"
+            android:layout_margin="1dp"
+            android:background="@color/colorTimetableSub"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Kannada" />
+
+            <TextView
+                style="@style/TimeTableTextSubStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ruby" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.desktalk;
+package com.desktalk.Model;
 
 import com.google.gson.annotations.SerializedName;
 

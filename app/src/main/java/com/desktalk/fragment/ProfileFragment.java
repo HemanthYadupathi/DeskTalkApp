@@ -1,27 +1,48 @@
 package com.desktalk.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.widget.Toast;
+
 import com.activity.desktalkapp.R;
+import com.desktalk.Model.UserDataModel;
 import com.desktalk.activity.DashboardActivity;
 import com.desktalk.activity.EditProfileActivity;
 import com.desktalk.activity.ProfileActivity;
+import com.desktalk.util.Apis;
+import com.desktalk.util.Connectivity;
+import com.desktalk.util.Constants;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,11 +57,12 @@ public class ProfileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = ProfileFragment.class.getSimpleName();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private TextView prof_Fname,prof_Mname,prof_DOB,prof_BG,prof_Mnumber,prof_Address,prof_Hobby,prof_Skill;
+    private TextView prof_Fname, prof_Mname, prof_DOB, prof_BG, prof_Mnumber, prof_Address, prof_Hobby, prof_Skill, prof_Description;
     private SharedPreferences sharedpreferences;
     Editor editor;
     private OnFragmentInteractionListener mListener;
@@ -82,13 +104,13 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        sharedpreferences = getActivity().getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE); //1
+        sharedpreferences = getActivity().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
 
         View rootView = inflater.inflate(R.layout.activity_profile, container, false);
         mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
 
-        ((DashboardActivity) getActivity()).setToolbar(mToolbar, "Profile");
+        ((DashboardActivity) getActivity()).setToolbar(mToolbar, "Fannie Hunt");
 
         View v = rootView.findViewById(R.id.id_content);
 
@@ -116,67 +138,172 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        prof_Fname=(TextView) rootView.findViewById(R.id.prof_Fname);
-        prof_Mname=(TextView) rootView.findViewById(R.id.prof_Mname);
-        prof_DOB=(TextView) rootView.findViewById(R.id.prof_DOB);
-        prof_BG=(TextView) rootView.findViewById(R.id.prof_BG);
-        prof_Mnumber=(TextView) rootView.findViewById(R.id.prof_Mnumber);
-        prof_Address=(TextView) rootView.findViewById(R.id.prof_Address);
-        prof_Hobby=(TextView) rootView.findViewById(R.id.prof_Hobby);
-        prof_Skill=(TextView) rootView.findViewById(R.id.prof_Skill);
-
-        try {
-            if(new JSONObject(sharedpreferences.getString("Log_User_Deatils","")).has("userdata")) {
-                JSONObject userdata = new JSONObject(sharedpreferences.getString("Log_User_Deatils", "")).getJSONObject("userdata");
-                if (userdata.has("father_name")) {
-                    prof_Fname.setText(userdata.getString("father_name"));
-                } else {
-                    prof_Fname.setText(" -- ");
-                }
-                if (userdata.has("mother_name")) {
-                    prof_Mname.setText(userdata.getString("mother_name"));
-                } else {
-                    prof_Mname.setText(" -- ");
-                }
-                if (userdata.has("date_of_birth")) {
-                    prof_DOB.setText(userdata.getString("date_of_birth"));
-                } else {
-                    prof_DOB.setText(" -- ");
-                }
-                if (userdata.has("blood_group")) {
-                    prof_BG.setText(userdata.getString("blood_group"));
-                } else {
-                    prof_BG.setText(" -- ");
-                }
-                if (userdata.has("mobile")) {
-                    prof_Mnumber.setText(userdata.getString("mobile"));
-                } else {
-                    prof_Mnumber.setText(" -- ");
-                }
-                if (userdata.has("address")) {
-                    prof_Address.setText(userdata.getString("address"));
-                } else {
-                    prof_Address.setText(" -- ");
-                }
-                if (userdata.has("hobbies")) {
-                    prof_Hobby.setText(userdata.getString("hobbies").replace(",","\n"));
-                } else {
-                    prof_Hobby.setText(" -- ");
-                }
-                if (userdata.has("skills")) {
-                    prof_Skill.setText(userdata.getString("skills").replace(",","\n"));
-                } else {
-                    prof_Skill.setText(" -- ");
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        prof_Fname = (TextView) rootView.findViewById(R.id.prof_Fname);
+        prof_Mname = (TextView) rootView.findViewById(R.id.prof_Mname);
+        prof_DOB = (TextView) rootView.findViewById(R.id.prof_DOB);
+        prof_BG = (TextView) rootView.findViewById(R.id.prof_BG);
+        prof_Mnumber = (TextView) rootView.findViewById(R.id.prof_Mnumber);
+        prof_Address = (TextView) rootView.findViewById(R.id.prof_Address);
+        prof_Hobby = (TextView) rootView.findViewById(R.id.prof_Hobby);
+        prof_Skill = (TextView) rootView.findViewById(R.id.prof_Skill);
+        prof_Description = (TextView) rootView.findViewById(R.id.textDesc);
 
 
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        String token = sharedpreferences.getString(Constants.PREFERENCE_KEY_TOKEN, "");
+        if (!token.contentEquals("") || token != null) {
+
+            if (Connectivity.isConnected(getActivity())) {
+                showProgress(true);
+                getUserProfile(token);
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Log.e(TAG, "token null");
+            Toast.makeText(getActivity(), "Something went wrong, please login again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void getUserProfile(String token) {
+        Gson gson = new GsonBuilder().setLenient().create();
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        OkHttpClient client = httpClient.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Apis mInterfaceService = retrofit.create(Apis.class);
+        Call<JsonElement> mService = mInterfaceService.getUserProfile(token);
+        mService.enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                if (response.code() == 200) {
+
+                    if (response.body() != null) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response.body().toString());
+                            if (String.valueOf(jsonObject.get("status").toString()).contentEquals("success")) {
+                                setProfileData(jsonObject.getJSONObject("response").toString());
+
+                            } else {
+                                showProgress(false);
+                                Toast.makeText(getActivity(), "Something went wrong !!", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                } else if (response.code() == 404) {
+                    showProgress(false);
+                    getActivity().finish();
+                    Constants.startLogin(getActivity());
+                    Toast.makeText(getActivity(), "Session expired, please login again", Toast.LENGTH_SHORT).show();
+                } else {
+                    showProgress(false);
+                    Toast.makeText(getActivity(), "Something went wrong, please login again", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonElement> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+            }
+        });
+    }
+
+    private void setProfileData(String data) {
+        Gson gson = new Gson();
+        UserDataModel userData = gson.fromJson(data, UserDataModel.class);
+
+        if (!userData.getFather_name().toString().contentEquals("")) {
+            prof_Fname.setText(userData.getFather_name().toString());
+        } else {
+            prof_Fname.setText(" -- ");
+        }
+        if (!userData.getMother_name().toString().contentEquals("")) {
+            prof_Mname.setText(userData.getMother_name().toString());
+        } else {
+            prof_Mname.setText(" -- ");
+        }
+        if (!userData.getDate_of_birth().toString().contentEquals("")) {
+            prof_DOB.setText(userData.getDate_of_birth().toString());
+        } else {
+            prof_DOB.setText(" -- ");
+        }
+        if (!userData.getBlood_group().toString().contentEquals("")) {
+            prof_BG.setText(userData.getBlood_group().toString());
+        } else {
+            prof_BG.setText(" -- ");
+        }
+        if (!userData.getMobile().toString().contentEquals("")) {
+            prof_Mnumber.setText(userData.getMobile().toString());
+        } else {
+            prof_Mnumber.setText(" -- ");
+        }
+        if (!userData.getAddress().toString().contentEquals("")) {
+            prof_Address.setText(userData.getAddress().toString());
+        } else {
+            prof_Address.setText(" -- ");
+        }
+        if (!userData.getHobbies().toString().contentEquals("")) {
+            prof_Hobby.setText(userData.getHobbies().toString().replace(",", "\n"));
+        } else {
+            prof_Hobby.setText(" -- ");
+        }
+        if (!userData.getSkills().toString().contentEquals("")) {
+            prof_Skill.setText(userData.getSkills().toString().replace(",", "\n"));
+        } else {
+            prof_Skill.setText(" -- ");
+        }
+        if (!userData.getDescription().toString().contentEquals("")) {
+            prof_Description.setText(userData.getDescription().toString());
+        } else {
+            //rootView.findViewById(R.id.card_view_description).setVisibility(View.GONE);
+        }
+    }
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mProfileForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mProfileForm.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProfileForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProfileForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        }*/
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
