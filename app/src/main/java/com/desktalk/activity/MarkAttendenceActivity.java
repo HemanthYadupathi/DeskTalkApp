@@ -21,6 +21,8 @@ import com.desktalk.util.ShadowTransformer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,7 +43,7 @@ public class MarkAttendenceActivity extends AppCompatActivity {
     private final String TAG = MarkAttendenceActivity.class.getSimpleName();
     private SharedPreferences mSharedPreferences;
     private String loginToken, selectedClassID, date;
-    private TextView mTextViewDate;
+    private TextView mTextViewSelectedClass, mTextViewTeacher,mTextViewDate;
     private ArrayList<AttendanceDetailsModel> mArrayListAttendanceDetailsModels;
 
     @Override
@@ -52,9 +54,26 @@ public class MarkAttendenceActivity extends AppCompatActivity {
 
         mTextViewDate = (TextView) findViewById(R.id.date);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
+        mTextViewSelectedClass = (TextView) findViewById(R.id.textSelectedClass);
+        mTextViewTeacher = (TextView) findViewById(R.id.textTeacherName);
 
         mSharedPreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE);
         loginToken = mSharedPreferences.getString(Constants.PREFERENCE_KEY_TOKEN, "");
+
+        String userData = mSharedPreferences.getString(Constants.PREFERENCE_KEY_USERDATA, "");
+        if (!userData.contentEquals("") || userData != null) {
+            try {
+                JsonObject userDataObject = new JsonParser().parse(userData).getAsJsonObject();
+                mTextViewTeacher.setText(userDataObject.get("fname").getAsString() + " " + userDataObject.get("lname").getAsString());
+
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        } else {
+            Log.e(TAG, "userData is null");
+        }
+
+        mTextViewSelectedClass.setText(getIntent().getStringExtra("className"));
         selectedClassID = getIntent().getStringExtra("classID");
         date = Constants.getDate();
         mTextViewDate.setText(date);

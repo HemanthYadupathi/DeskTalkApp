@@ -59,6 +59,10 @@
     <string name="action_logout">Logout</string>
     <string name="action_save">Save</string>
 
+    <string name="text_TandC">I agree for Terms &amp; Conditions</string>
+    <string name="prompt_registered_number">Enter your registered mobile no.</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_profile">ProfileActivity</string>

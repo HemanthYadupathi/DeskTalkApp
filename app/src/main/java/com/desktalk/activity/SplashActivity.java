@@ -34,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private SharedPreferences sharedpreferences;
+    private SharedPreferences sharedpreferences, mPreferencesInitSetup;
     private SharedPreferences.Editor editor;
     private final String TAG = SplashActivity.class.getSimpleName();
 
@@ -47,7 +47,7 @@ public class SplashActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                launchNextActivity();
+                LaunchInitSetUp();
             }
         }, 1500);
     }
@@ -76,6 +76,22 @@ public class SplashActivity extends AppCompatActivity {
             }
         } else {
             clearActivity();
+        }
+
+    }
+
+    private void LaunchInitSetUp() {
+        mPreferencesInitSetup = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_INITIAL_SETUP, Context.MODE_PRIVATE);
+        if (mPreferencesInitSetup != null) {
+            if (!mPreferencesInitSetup.getBoolean(Constants.PREFERENCE_KEY_FIRST_USER, false)) {
+                startActivity(new Intent(SplashActivity.this, FirstLoginActivity.class));
+                finish();
+            } else {
+                launchNextActivity();
+            }
+        } else {
+            startActivity(new Intent(SplashActivity.this, FirstLoginActivity.class));
+            finish();
         }
 
     }

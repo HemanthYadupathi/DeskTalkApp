@@ -65,6 +65,9 @@ public class Constants {
 
     public static final String PREFERENCE_KEY_TOKEN = "TOKEN";
 
+    public static final String PREFERENCE_INITIAL_SETUP = "INITIAL_SETUP";
+    public static final String PREFERENCE_KEY_FIRST_USER = "FIRST_USER";
+
     public static final String PRESENT = "Present";
     public static final String ABSENT = "Absent";
     public static final String ATTENDANCE_UNKNOWN = "Unknown";
