@@ -13,10 +13,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.fragment.AcademicsFragment;
@@ -24,12 +26,13 @@ import com.desktalk.fragment.AttendanceFragment;
 import com.desktalk.fragment.AttendanceHistoryFragment;
 import com.desktalk.fragment.AttendanceMainFragment;
 import com.desktalk.fragment.HomeFragment;
+import com.desktalk.fragment.LeaveFragment;
 import com.desktalk.fragment.ProfileFragment;
 import com.desktalk.util.Constants;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
-        AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AttendanceMainFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, AttendanceHistoryFragment.OnListFragmentInteractionListener {
+        AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AttendanceMainFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, AttendanceHistoryFragment.OnListFragmentInteractionListener,LeaveFragment.OnFragmentInteractionListener {
 
     int int_value = 0;
     int selected_ID = 0;
@@ -223,6 +226,8 @@ public class DashboardActivity extends AppCompatActivity
         } else if (id == Constants.NAV_MENU_ITEM_BUSTRACK) {
             //TODO: Implement
             //startActivity(new Intent(DashboardActivity.this, BusTrackMapActivity.class));
+        } else if (id == Constants.NAV_MENU_ITEM_LEAVES) {
+            fragmentClass = LeaveFragment.class;
         }
 
         try {
