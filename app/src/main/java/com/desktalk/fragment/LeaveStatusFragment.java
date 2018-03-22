@@ -1,7 +1,7 @@
 package com.desktalk.fragment;
 
 /**
- * Created by Pavan.Chunchula on 25-10-2017.
+ * Created by Pavan.Chunchula on 16-03-2018.
  */
 
 import android.os.Bundle;
@@ -87,16 +87,16 @@ public class LeaveStatusFragment extends Fragment {
         RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.recylerview);
         rv.setHasFixedSize(true);
         if (Constants.USER_ID == Constants.USER_TEACHER) {
-            Leave_Adapter adapter = new Leave_Adapter(list, getContext(),Clicked);
+            Leave_Adapter adapter = new Leave_Adapter(list, getContext(),category);
             rv.setAdapter(adapter);
 
         }
         if (Constants.USER_ID == Constants.USER_PARENT) {
-            Leave_Adapter adapter = new Leave_Adapter(list, getContext(), Clicked);
+            Leave_Adapter adapter = new Leave_Adapter(list, getContext(), category);
             rv.setAdapter(adapter);
 
         } else {
-            Leave_Adapter adapter = new Leave_Adapter(list, getContext(),Clicked);
+            Leave_Adapter adapter = new Leave_Adapter(list, getContext(),category);
             rv.setAdapter(adapter);
         }
 

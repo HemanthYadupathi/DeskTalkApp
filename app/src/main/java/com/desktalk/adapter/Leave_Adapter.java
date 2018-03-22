@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.util.Constants;
 
 import java.util.ArrayList;
 
@@ -24,29 +25,44 @@ import java.util.ArrayList;
 public class Leave_Adapter extends RecyclerView.Adapter<Leave_Adapter.MyViewHolder> {
     private ArrayList<String> mDataset;
     private Context mContext;
+    private String category;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout mLayoutText;
         public TextView mTextView;
-        public ImageView syllabus_image_edit, syllabus_image_download, syllabus_image_delete;
+        public ImageView leave_image_edit, leave_image_download, leave_image_delete;
 
         public MyViewHolder(View v) {
             super(v);
 
-            mLayoutText = (LinearLayout) v.findViewById(R.id.textheading);
+            mLayoutText = (LinearLayout) v.findViewById(R.id.textheading_leave);
             mTextView = (TextView) v.findViewById(R.id.leave_title);
-            syllabus_image_edit = (ImageView) v.findViewById(R.id.leave_image_edit);
-            syllabus_image_download = (ImageView) v.findViewById(R.id.syllabus_image_download);
-            syllabus_image_delete = (ImageView) v.findViewById(R.id.syllabus_image_delete);
+            leave_image_edit = (ImageView) v.findViewById(R.id.leave_image_edit);
+            leave_image_download = (ImageView) v.findViewById(R.id.leave_image_download);
+            leave_image_delete = (ImageView) v.findViewById(R.id.leave_image_delete);
+            if (category.equals("Approved")) {
+                leave_image_edit.setVisibility(View.INVISIBLE);
+
+            } else if (category.equals("Rejected")) {
+                leave_image_edit.setVisibility(View.INVISIBLE);
+
+            }
+            if (Constants.USER_ID == Constants.USER_PARENT) {
+                leave_image_download.setVisibility(View.VISIBLE);
+                leave_image_delete.setVisibility(View.VISIBLE);
+            } else if (Constants.USER_ID == Constants.USER_TEACHER) {
+                leave_image_download.setVisibility(View.INVISIBLE);
+                leave_image_delete.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public Leave_Adapter(ArrayList<String> myDataset, Context myContextt, String clicked) {
-        Log.i("clicked",clicked);
+        category = clicked;
         mDataset = myDataset;
         mContext = myContextt;
     }
@@ -75,8 +91,17 @@ public class Leave_Adapter extends RecyclerView.Adapter<Leave_Adapter.MyViewHold
                 final Dialog dialog = new Dialog(mContext);
                 dialog.setContentView(R.layout.view_leave);
                 dialog.setTitle("Accepted");
-                dialog.setCanceledOnTouchOutside(false);
+//                dialog.setCanceledOnTouchOutside(false);
                 Button dismis = (Button) dialog.findViewById(R.id.dismis_view);
+
+                TextView title_for_leave = (TextView) dialog.findViewById(R.id.title_for_leave_status);
+                TextView leave_tiltle = (TextView) dialog.findViewById(R.id.leave_tiltle);
+                TextView leave_description = (TextView) dialog.findViewById(R.id.leave_description);
+
+                leave_tiltle.setText(String.valueOf(mDataset.get(position)));
+                title_for_leave.setText(String.valueOf(category));
+
+
                 dismis.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -89,7 +114,7 @@ public class Leave_Adapter extends RecyclerView.Adapter<Leave_Adapter.MyViewHold
                 dialog.show();
             }
         });
-        holder.syllabus_image_edit.setOnClickListener(new View.OnClickListener() {
+        holder.leave_image_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i("edit", mDataset.get(position) + " Clicked_Edit");

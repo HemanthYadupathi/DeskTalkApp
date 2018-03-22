@@ -17,10 +17,10 @@
             android:gravity="center_vertical">
 
             <LinearLayout
-                android:id="@+id/textheading"
+                android:id="@+id/textheading_leave"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toLeftOf="@+id/leave_image_edit"
+                android:layout_toLeftOf="@+id/leave_image_delete"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -52,6 +52,34 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/leave_image_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/leave_image_download"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center_vertical"
+                android:src="@mipmap/ic_delete_blue" />
+
+            <ImageView
+                android:id="@+id/leave_image_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/leave_image_edit"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@mipmap/ic_accept" />
 
             <ImageView
                 android:id="@+id/leave_image_edit"
