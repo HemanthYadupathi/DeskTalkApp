@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.adapter.Leave_Adapter;
 import com.desktalk.fragment.AcademicsFragment;
 import com.desktalk.fragment.AttendanceFragment;
 import com.desktalk.fragment.AttendanceHistoryFragment;
@@ -28,11 +29,13 @@ import com.desktalk.fragment.AttendanceMainFragment;
 import com.desktalk.fragment.HomeFragment;
 import com.desktalk.fragment.LeaveFragment;
 import com.desktalk.fragment.ProfileFragment;
+import com.desktalk.util.Connectivity;
 import com.desktalk.util.Constants;
+import com.desktalk.util.PublicMethods;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
-        AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AttendanceMainFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, AttendanceHistoryFragment.OnListFragmentInteractionListener,LeaveFragment.OnFragmentInteractionListener {
+        AcademicsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AttendanceMainFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, AttendanceHistoryFragment.OnListFragmentInteractionListener, LeaveFragment.OnLeaveFragmentBackPress {
 
     int int_value = 0;
     int selected_ID = 0;
@@ -40,6 +43,8 @@ public class DashboardActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
+    private final String TAG = DashboardActivity.class.getSimpleName();
+    private String token;
 
 
     @Override
@@ -49,7 +54,7 @@ public class DashboardActivity extends AppCompatActivity
 
         sharedpreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE); //1
         editor = sharedpreferences.edit();
-
+        token = sharedpreferences.getString(Constants.PREFERENCE_KEY_TOKEN, "");
 
         if (savedInstanceState == null) {
             Fragment fragment = null;
@@ -86,11 +91,19 @@ public class DashboardActivity extends AppCompatActivity
         } else if (Constants.USER_ID == Constants.USER_PARENT) {
             selected_ID = 1;
             addParentMenuInNavMenuDrawer();
+            if (!token.contentEquals("") || token != null) {
+                if (Connectivity.isConnected(getApplicationContext())) {
+                    PublicMethods.getStudentList(DashboardActivity.this, TAG, token);
+                } else {
+                    Log.d(TAG, getString(R.string.check_connection));
+                }
+            } else {
+                Log.d(TAG, "Token null");
+            }
         } else if (Constants.USER_ID == Constants.USER_STUDENT) {
             selected_ID = 2;
             addStudentMenuInNavMenuDrawer();
         }
-
 
     }
 
@@ -169,6 +182,8 @@ public class DashboardActivity extends AppCompatActivity
             } else
                 super.onBackPressed();
         }
+
+        OnLeaveFragmentBackPress();
     }
 
 
@@ -198,12 +213,28 @@ public class DashboardActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
+
+            if (!token.contentEquals("") || token != null) {
+                if (Connectivity.isConnected(getApplicationContext())) {
+                    Constants.logout(DashboardActivity.this, token);
+                } else {
+                    Log.d(TAG, getString(R.string.check_connection));
+                }
+            } else {
+                Log.d(TAG, "Token null");
+            }
+            Constants.clearSharedPreferenceData(sharedpreferences, TAG);
             finish();
-            startActivity(new Intent(DashboardActivity.this, LoginActivity.class));
+            Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -253,4 +284,11 @@ public class DashboardActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void OnLeaveFragmentBackPress() {
+        Log.d(TAG, "OnLeaveFragmentBackPress clear arraylist");
+        LeaveFragment.pendingLeavesList.clear();
+        LeaveFragment.rejectList.clear();
+        LeaveFragment.approvedList.clear();
+    }
 }

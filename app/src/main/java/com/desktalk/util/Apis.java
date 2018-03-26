@@ -57,4 +57,32 @@ public interface Apis {
     @FormUrlEncoded
     Call<JsonElement> markAttedance(
             @Header("token") String token, @FieldMap Map<String, String> form);
+
+    @POST("api/get_leaveslistbyclass/{class_id}")
+    Call<JsonElement> getLeavesbyClass(
+            @Header("token") String token, @Path("class_id") String Class_ID);
+
+    @POST("api/update_leavestatus")
+    @FormUrlEncoded
+    Call<JsonElement> updatLeaveStatus(
+            @Header("token") String token, @FieldMap Map<String, String> form);
+
+    @POST("api/apply_leave")
+    @FormUrlEncoded
+    Call<JsonElement> applyLeave(
+            @Header("token") String token, @FieldMap Map<String, String> form);
+
+    @POST("api/edit_leave")
+    @FormUrlEncoded
+    Call<JsonElement> updateLeave(
+            @Header("token") String token, @FieldMap Map<String, String> form);
+
+    @GET("api/get_studentlistbyparent")
+    Call<JsonElement> studentListForParent(@Header("token") String token);
+
+    @GET("api/get_leaveslistbyparent")
+    Call<JsonElement> getLeaveListforParent(@Header("token") String token);
+
+    @GET("api/delete_leavebyid/{leave_id}")
+    Call<JsonElement> deleteLeaveById(@Header("token") String token,@Path("leave_id") String LeaveId);
 }

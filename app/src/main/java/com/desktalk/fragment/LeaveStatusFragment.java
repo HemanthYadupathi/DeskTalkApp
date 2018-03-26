@@ -11,22 +11,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.Model.LeaveDetailsModel;
 import com.desktalk.adapter.Leave_Adapter;
 import com.desktalk.util.Constants;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 ;
 
 public class LeaveStatusFragment extends Fragment {
     String Clicked = " ";
-
-    public LeaveStatusFragment() {
-        // Required empty public constructor
-    }
+    private ArrayList<LeaveDetailsModel> leaveDetailsModels = new ArrayList<LeaveDetailsModel>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,66 +42,35 @@ public class LeaveStatusFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
         String category = this.getArguments().getString("Value");
-        ArrayList<String> list = new ArrayList<String>();
+        String token = this.getArguments().getString("token");
+        TextView textNoLeaveMsg = (TextView) rootView.findViewById(R.id.textNoLeaveMsg);
         if (category.equals("Pending")) {
             Clicked = "Pending";
-            if (Constants.USER_ID == Constants.USER_PARENT) {
-                list.clear();
-                list.add("English");
-                list.add("Kannada");
-                list.add("Computer");
+            if (LeaveFragment.pendingLeavesList.size() != 0) {
+                leaveDetailsModels = LeaveFragment.pendingLeavesList;
             } else {
-                list.clear();
-                list.add("English");
-                list.add("Kannada");
-                list.add("Computer");
+                textNoLeaveMsg.setText("Great !!! No Pending Leaves");
             }
         } else if (category.equals("Approved")) {
             Clicked = "Approved";
-            if (Constants.USER_ID == Constants.USER_PARENT) {
-                list.clear();
-                list.add("English");
-                list.add("Kannada");
-                list.add("Computer");
+            if (LeaveFragment.approvedList.size() != 0) {
+                leaveDetailsModels = LeaveFragment.approvedList;
             } else {
-                list.clear();
-                list.add("English");
-                list.add("Kannada");
-                list.add("Computer");
+                textNoLeaveMsg.setText("No Approved Leaves");
             }
         } else if (category.equals("Rejected")) {
             Clicked = "Rejected";
-            if (Constants.USER_ID == Constants.USER_PARENT) {
-                list.clear();
-                list.add("English 1");
-                list.add("English 2");
-                list.add("English 3");
-                list.add("English 4");
-                list.add("English 5");
-                list.add("English 6");
+            if (LeaveFragment.rejectList.size() != 0) {
+                leaveDetailsModels = LeaveFragment.rejectList;
             } else {
-                list.clear();
-                list.add("English 1");
-                list.add("English 2");
+                textNoLeaveMsg.setText("Great !!! No Rejected Leaves");
             }
         }
 
         RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.recylerview);
         rv.setHasFixedSize(true);
-        if (Constants.USER_ID == Constants.USER_TEACHER) {
-            Leave_Adapter adapter = new Leave_Adapter(list, getContext(),category);
-            rv.setAdapter(adapter);
-
-        }
-        if (Constants.USER_ID == Constants.USER_PARENT) {
-            Leave_Adapter adapter = new Leave_Adapter(list, getContext(), category);
-            rv.setAdapter(adapter);
-
-        } else {
-            Leave_Adapter adapter = new Leave_Adapter(list, getContext(),category);
-            rv.setAdapter(adapter);
-        }
-
+        Leave_Adapter adapter = new Leave_Adapter(leaveDetailsModels, getContext(), category, token);
+        rv.setAdapter(adapter);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 

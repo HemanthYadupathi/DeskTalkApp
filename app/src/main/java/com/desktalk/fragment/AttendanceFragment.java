@@ -45,23 +45,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AttendanceFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AttendanceFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AttendanceFragment extends Fragment implements View.OnClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private Button mButtonMarkAttendance, mButtonAttendanceHistory;
     private OnFragmentInteractionListener mListener;
@@ -71,28 +55,6 @@ public class AttendanceFragment extends Fragment implements View.OnClickListener
     private ArrayList<ClassDetailsModel> modelArrayList = new ArrayList<ClassDetailsModel>();
     private NavigationView navigationView;
 
-
-    public AttendanceFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AttendanceFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AttendanceFragment newInstance(String param1, String param2) {
-        AttendanceFragment fragment = new AttendanceFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -170,32 +132,7 @@ public class AttendanceFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        /*Fragment fragment = null;
-        switch (view.getId()) {
 
-            case R.id.button_markAtt:
-                try {
-                    fragment = MarkAttendanceFragment.class.newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (fragment != null) {
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.attendance_framelayout, fragment).commit();
-                }
-                break;
-            case R.id.button_attendanceHistory:
-                try {
-                    fragment = AttendanceHistoryFragment.class.newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (fragment != null) {
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.attendance_framelayout, fragment).commit();
-                }
-                break;
-        }*/
         String classID = null, classname = null;
         if (modelArrayList.size() != 0) {
             classID = modelArrayList.get(mSpinnerClass.getSelectedItemPosition()).getClass_id();

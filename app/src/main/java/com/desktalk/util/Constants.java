@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.desktalk.activity.LoginActivity;
+import com.desktalk.fragment.LeaveFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -68,12 +69,19 @@ public class Constants {
     public static final String PREFERENCE_INITIAL_SETUP = "INITIAL_SETUP";
     public static final String PREFERENCE_KEY_FIRST_USER = "FIRST_USER";
 
+    public static final String PREFERENCE_STUDENT_LIST = "STUDENT_LIST";
+    public static final String PREFERENCE_KEY_STUDENTLIST_JSON = "STUDENTLIST_JSON";
+
     public static final String PRESENT = "Present";
     public static final String ABSENT = "Absent";
     public static final String ATTENDANCE_UNKNOWN = "Unknown";
     public static final String ATTENDANCE_STATUS_UNKNOWN = "0";
     public static final String ATTENDANCE_STATUS_PRESENT = "1";
     public static final String ATTENDANCE_STATUS_ABSENT = "2";
+
+    public static final String LEAVE_STATUS_PENDING = "0";
+    public static final String LEAVE_STATUS_APPROVED = "1";
+    public static final String LEAVE_STATUS_REJECTED = "2";
 
     //public static final int NAV_MENU_ITEM_ATTENDENCE = 0;
     public static final int NAV_MENU_ITEM_PROFILE = 1;
@@ -185,9 +193,53 @@ public class Constants {
         Log.i(TAG, "Preference cleared");
     }
 
-    public static void startLogin(Context mContext){
+    public static void startLogin(Context mContext) {
         Intent intent = new Intent(mContext, LoginActivity.class);
         mContext.startActivity(intent);
     }
 
+    public static void updatLeaveStatus(final String TAG, final String token, Map<String, String> mapData, final String classID) {
+
+        Gson gson = new GsonBuilder().setLenient().create();
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        OkHttpClient client = httpClient.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Apis mInterfaceService = retrofit.create(Apis.class);
+        Call<JsonElement> mService = mInterfaceService.updatLeaveStatus(token, mapData);
+        mService.enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                if (response.code() == 200) {
+                    if (response.body() != null) {
+                        try {
+                            Log.d(TAG, response.body().toString());
+                            JSONObject jsonObject = new JSONObject(response.body().toString());
+                            Log.d(TAG, String.valueOf(jsonObject.get("response")));
+                            if (String.valueOf(jsonObject.get("status")).contentEquals("success")) {
+                                Log.d(TAG, "Leave marked success");
+                            } else {
+                                Log.d(TAG, "Leave marked failed");
+                            }
+                            LeaveFragment.getLeavesByClass(token, classID, true, false);
+                        } catch (Exception e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+
+                    }
+                } else {
+                    Log.d(TAG, String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonElement> call, Throwable t) {
+                Log.d(TAG, t.getMessage().toString());
+            }
+        });
+    }
 }

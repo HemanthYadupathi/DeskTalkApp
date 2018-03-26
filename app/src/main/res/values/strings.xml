@@ -45,7 +45,7 @@
     <string name="check_connection">Oops!! Check your internet connection</string>
     <string name="mark_attendance">Mark Attendance</string>
     <string name="attendance_history">Attendance History</string>
-    <string name="select_classes">Select Classes</string>
+    <string name="select_classes">Select Class</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>

@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -90,13 +91,14 @@ public class AcademicsFragment extends Fragment {
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_academics_fab);
         AppCompatSpinner spinner_class = (AppCompatSpinner) rootView.findViewById(R.id.spinner_class);
+        CardView cardView = (CardView)rootView.findViewById(R.id.card_selectclass);
         fab.bringToFront();
 
         if (Constants.USER_ID == Constants.USER_TEACHER) {
-            spinner_class.setVisibility(View.VISIBLE);
+            cardView.setVisibility(View.VISIBLE);
             fab.setVisibility(View.VISIBLE);
         } else {
-            spinner_class.setVisibility(View.GONE);
+            cardView.setVisibility(View.GONE);
             fab.setVisibility(View.GONE);
         }
 
