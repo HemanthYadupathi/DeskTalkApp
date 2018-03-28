@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "427415431905",
+    "firebase_url": "https://desktalk-9badf.firebaseio.com",
+    "project_id": "desktalk-9badf",
+    "storage_bucket": "desktalk-9badf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427415431905:android:107f67c04319c426",
+        "android_client_info": {
+          "package_name": "com.activity.desktalkapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "427415431905-7e7od1nvoeeurjmhk2cdmhibbuqgid2n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.activity.desktalkapp",
+            "certificate_hash": "c1eb2aa6b4a846696fc1d731e2162a6acd65ba7c"
+          }
+        },
+        {
+          "client_id": "427415431905-7e3ltneqjccbjpv1cct6dmlu5mrr2skn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQXxQZAgRBS3qIi8KWqTYcmaD0TAwwCtY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427415431905-7e3ltneqjccbjpv1cct6dmlu5mrr2skn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
