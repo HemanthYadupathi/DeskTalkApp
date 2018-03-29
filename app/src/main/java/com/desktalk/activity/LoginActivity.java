@@ -3,7 +3,10 @@ package com.desktalk.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -21,13 +24,17 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.util.Apis;
+import com.desktalk.util.Config;
 import com.desktalk.util.Connectivity;
 import com.desktalk.util.Constants;
+import com.desktalk.util.MyFirebaseInstanceIDService;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -49,17 +56,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    ProgressDialog progressDialog;
 
     private SharedPreferences sharedpreferences;
     private Editor editor;
-
+    private static ProgressDialog authDialog;
     // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
     private TextView mTextViewForgotPwd;
+    private Snackbar snackbar;
     private final String TAG = LoginActivity.class.getSimpleName();
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    RelativeLayout main_actvity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +82,8 @@ public class LoginActivity extends AppCompatActivity {
         mTextViewForgotPwd = (TextView) findViewById(R.id.textForgotPwd);
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-        sharedpreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE); //1
+        main_actvity = (RelativeLayout) findViewById(R.id.activity_login);
+        sharedpreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, 0); //1
         editor = sharedpreferences.edit();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -203,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                                     editor.putString(Constants.PREFERENCE_KEY_TOKEN, String.valueOf(jsonObject.getJSONObject("response").get("token")));
                                     editor.putString(Constants.PREFERENCE_KEY_USER_NAME, user);
                                     editor.putString(Constants.PREFERENCE_KEY_USER_PWD, password);
-                                    editor.putString(Constants.PREFERENCE_KEY_DEVICE_TOKEN,android_id );
+                                    editor.putString(Constants.PREFERENCE_KEY_DEVICE_TOKEN, android_id);
                                     editor.commit();
                                     editor.apply();
 
@@ -219,6 +230,29 @@ public class LoginActivity extends AppCompatActivity {
                                     finish();
                                     Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                                     startActivity(intent);
+                                    Log.e("ID",Config.ID);
+                                    mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+                                        @Override
+                                        public void onReceive(Context context, Intent intent) {
+
+                                            // checking for type intent filter
+                                            if (intent != null) {
+                                                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
+                                                    // gcm successfully registered
+                                                    // now subscribe to `global` topic to receive app wide notifications
+                                                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
+
+                                                    displayFirebaseRegId();
+
+                                                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+
+                                                }
+                                            } else {
+                                                Toast.makeText(context, "Intent is null", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    };
+
                                     /*if (Constants.USER_ID == Constants.USER_ATTENDER || Constants.USER_ID == Constants.USER_TEACHER) {
                                         Intent intent = new Intent(LoginActivity.this, AttendanceMainActivity.class);
                                         startActivity(intent);
@@ -290,6 +324,55 @@ public class LoginActivity extends AppCompatActivity {
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+
+    private void displayFirebaseRegId() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        String regId = pref.getString("regId", null);
+
+        Log.e(TAG, "Firebase reg id: " + regId);
+        if (Connectivity.isConnected(LoginActivity.this)) {
+            if (!TextUtils.isEmpty(regId)) {
+//                regid.setText("Device Registered");
+//                regid.setTextColor(getResources().getColor(R.color.colorPrimary));
+                dismissDialog();
+            } else {
+//                regid.setText("Device not Yet Registered!");
+//                regid.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                Toast.makeText(getApplicationContext(), "Registering", Toast.LENGTH_SHORT).show();
+                authDialog = createAuthDialog(LoginActivity.this);
+                authDialog.show();
+            }
+        } else {
+            dismissDialog();
+            snackbar.make(main_actvity, "Lost Internet Connection", Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    public static void dismissDialog() {
+        if (authDialog != null) {
+            try {
+                authDialog.dismiss();
+            } catch (Exception e) {
+            }
+        }
+    }
+    private ProgressDialog createAuthDialog(Context context) {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMessage("Registering");
+        progressDialog.setCancelable(false);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                cancelSendTask();
+            }
+
+            private void cancelSendTask() {
+                //    Log.i(Setting_actvity.TAG, "Cancel Authenticated task!!");
+            }
+        });
+
+        return progressDialog;
     }
 
 }
