@@ -28,10 +28,15 @@ import com.desktalk.fragment.AttendanceHistoryFragment;
 import com.desktalk.fragment.AttendanceMainFragment;
 import com.desktalk.fragment.HomeFragment;
 import com.desktalk.fragment.LeaveFragment;
+import com.desktalk.fragment.MapFragment;
 import com.desktalk.fragment.ProfileFragment;
 import com.desktalk.util.Connectivity;
 import com.desktalk.util.Constants;
 import com.desktalk.util.PublicMethods;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener,
@@ -74,6 +79,21 @@ public class DashboardActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView.setNavigationItemSelectedListener(this);
         View headerview = navigationView.getHeaderView(0);
+
+        TextView nav_user = (TextView) headerview.findViewById(R.id.text_name);
+        sharedpreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE);
+        String userData = sharedpreferences.getString(Constants.PREFERENCE_KEY_USERDATA, "");
+        if (!userData.contentEquals("") || userData != null) {
+            try {
+                JsonObject userDataObject = new JsonParser().parse(userData).getAsJsonObject();
+                nav_user.setText(userDataObject.get("fname").getAsString() + " " + userDataObject.get("lname").getAsString());
+
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        } else {
+            Log.e(TAG, "userData is null");
+        }
         /*TextView profilename = (TextView) headerview.findViewById(R.id.textViewEdit);
 
         profilename.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +133,7 @@ public class DashboardActivity extends AppCompatActivity
         toolbar.setTitle(title);
     }
 
-    private void setActionBarToggle(Toolbar toolbar) {
+    public void setActionBarToggle(Toolbar toolbar) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open,
@@ -128,13 +148,13 @@ public class DashboardActivity extends AppCompatActivity
 
         Menu menu = navView.getMenu();
         menu.add(R.id.main, Constants.NAV_MENU_ITEM_ATTENDENCE, 0, "Attendance").setIcon(getDrawable(R.mipmap.ic_attend)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Manage Timetable").setIcon(getDrawable(R.mipmap.ic_timetable)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_EXAM, 0, "Examination").setIcon(getDrawable(R.mipmap.ic_edit)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "Assignments").setIcon(getDrawable(R.mipmap.ic_assignment)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_STD_PERFORMANCE, 0, "Student Performance").setIcon(getDrawable(R.mipmap.ic_performance)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_EVENTS, 0, "Create Event").setIcon(getDrawable(R.mipmap.ic_event)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Manage Timetable").setIcon(getDrawable(R.mipmap.ic_timetable)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_EXAM, 0, "Examination").setIcon(getDrawable(R.mipmap.ic_edit)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "Assignments").setIcon(getDrawable(R.mipmap.ic_assignment)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_STD_PERFORMANCE, 0, "Student Performance").setIcon(getDrawable(R.mipmap.ic_performance)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_EVENTS, 0, "Create Event").setIcon(getDrawable(R.mipmap.ic_event)).setCheckable(true);
         menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Approve Leave").setIcon(getDrawable(R.mipmap.ic_approveleave)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_suggestion)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_suggestion)).setCheckable(true);
 
 
         navView.invalidate();
@@ -144,11 +164,12 @@ public class DashboardActivity extends AppCompatActivity
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
 
         Menu menu = navView.getMenu();
+        menu.add(R.id.main, Constants.NAV_MENU_ITEM_BUS_TRACKING, 0, "Bus Tracking").setIcon(getDrawable(R.mipmap.ic_bus)).setCheckable(true);
         menu.add(R.id.main, Constants.NAV_MENU_ITEM_TIMETABLE, 0, "Timetable").setIcon(getDrawable(R.mipmap.ic_timetable)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_NEWS, 0, "View Newsletter").setIcon(getDrawable(R.mipmap.ic_news)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "View Assignments").setIcon(getDrawable(R.mipmap.ic_assignment)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_NEWS, 0, "View Newsletter").setIcon(getDrawable(R.mipmap.ic_news)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_ASSIGN, 0, "View Assignments").setIcon(getDrawable(R.mipmap.ic_assignment)).setCheckable(true);
         menu.add(R.id.main, Constants.NAV_MENU_ITEM_LEAVES, 0, "Leave Application").setIcon(getDrawable(R.mipmap.ic_leave)).setCheckable(true);
-        menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_suggestion)).setCheckable(true);
+        //menu.add(R.id.main, Constants.NAV_MENU_ITEM_SUGGESTION, 0, "Suggestion Box").setIcon(getDrawable(R.mipmap.ic_suggestion)).setCheckable(true);
 
 
         navView.invalidate();
@@ -177,8 +198,11 @@ public class DashboardActivity extends AppCompatActivity
         } else {
             if (checkNavigationMenuItem() != 0) {
                 navigationView.setCheckedItem(R.id.nav_home);
+                //List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+                //if (fragmentList.get(0).getTargetFragment() instanceof HomeFragment) {
                 HomeFragment fragment = new HomeFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_framelayout, fragment).commit();
+                //}
             } else
                 super.onBackPressed();
         }
@@ -253,9 +277,10 @@ public class DashboardActivity extends AppCompatActivity
         } else if (id == Constants.NAV_MENU_ITEM_ATTENDENCE) {
             fragmentClass = AttendanceMainFragment.class;
         } else if (id == Constants.NAV_MENU_ITEM_STD_PERFORMANCE) {
-            startActivity(new Intent(DashboardActivity.this, BusTrackMapActivity.class));
-        } else if (id == Constants.NAV_MENU_ITEM_BUSTRACK) {
+            //startActivity(new Intent(DashboardActivity.this, BusTrackMapActivity.class));
+        } else if (id == Constants.NAV_MENU_ITEM_BUS_TRACKING) {
             //TODO: Implement
+            fragmentClass = MapFragment.class;
             //startActivity(new Intent(DashboardActivity.this, BusTrackMapActivity.class));
         } else if (id == Constants.NAV_MENU_ITEM_LEAVES) {
             fragmentClass = LeaveFragment.class;
@@ -286,9 +311,11 @@ public class DashboardActivity extends AppCompatActivity
 
     @Override
     public void OnLeaveFragmentBackPress() {
-        Log.d(TAG, "OnLeaveFragmentBackPress clear arraylist");
-        LeaveFragment.pendingLeavesList.clear();
-        LeaveFragment.rejectList.clear();
-        LeaveFragment.approvedList.clear();
+        if (LeaveFragment.pendingLeavesList != null) {
+            Log.d(TAG, "OnLeaveFragmentBackPress clear arraylist");
+            LeaveFragment.pendingLeavesList.clear();
+            LeaveFragment.rejectList.clear();
+            LeaveFragment.approvedList.clear();
+        }
     }
 }

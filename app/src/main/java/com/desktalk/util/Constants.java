@@ -39,6 +39,7 @@ public class Constants {
     public static final int NAV_MENU_ITEM_LEAVES = 777;
     public static final int NAV_MENU_ITEM_NEWS = 888;
     public static final int NAV_MENU_ITEM_SUGGESTION = 999;
+    public static final int NAV_MENU_ITEM_BUS_TRACKING = 0111;
 
     //public static final int USER_TEACHER = 0;
     //public static final int USER_STUDENT = 1;
@@ -85,7 +86,6 @@ public class Constants {
 
     //public static final int NAV_MENU_ITEM_ATTENDENCE = 0;
     public static final int NAV_MENU_ITEM_PROFILE = 1;
-    public static final int NAV_MENU_ITEM_BUSTRACK = 2;
 
     public static void logout(final Context classname, String token) {
         final String TAG = "Logout constants";
@@ -225,7 +225,7 @@ public class Constants {
                             } else {
                                 Log.d(TAG, "Leave marked failed");
                             }
-                            LeaveFragment.getLeavesByClass(token, classID, true, false);
+                            LeaveFragment.getLeavesByClass(token, classID, false);
                         } catch (Exception e) {
                             Log.d(TAG, e.getMessage());
                         }

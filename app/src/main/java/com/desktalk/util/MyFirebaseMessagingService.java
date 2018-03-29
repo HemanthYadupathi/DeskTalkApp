@@ -1,5 +1,6 @@
 package com.desktalk.util;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -10,10 +11,12 @@ import com.google.firebase.messaging.RemoteMessage;
  */
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        Log.e(TAG, "onMessageReceived" + remoteMessage.getMessageId());
         super.onMessageReceived(remoteMessage);
-        Toast.makeText( getApplicationContext(),String.valueOf(remoteMessage.getData()),Toast.LENGTH_LONG).show();
     }
 
 

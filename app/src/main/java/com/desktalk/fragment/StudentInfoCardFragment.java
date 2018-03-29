@@ -54,6 +54,7 @@ public class StudentInfoCardFragment extends Fragment {
         args.putString("regno", model.getReference_id());
         args.putString("attend", model.getPercent());
         args.putString("status", model.getStatus());
+        args.putString("attend_takeid", model.getAttendance_take_id());
         f.setArguments(args);
 
         return f;
@@ -83,7 +84,7 @@ public class StudentInfoCardFragment extends Fragment {
         pos = getArguments().getInt("position");
         mTextViewName.setText(getArguments().getString("name"));
         mTextViewRegno.setText(getArguments().getString("regno"));
-        mTextViewAttend.setText(getArguments().getString("attend"));
+        mTextViewAttend.setText(getArguments().getString("attend") + "%");
         if (getArguments().getString("status").contentEquals(Constants.ATTENDANCE_STATUS_PRESENT)) {
             setLayout(mTextViewValue, Constants.PRESENT, getResources().getColor(R.color.colorGreenPresent));
             mLayoutButtons.setVisibility(View.GONE);
@@ -104,7 +105,7 @@ public class StudentInfoCardFragment extends Fragment {
                     //mMapStatus.put(getArguments().getString("attend"), Constants.ATTENDANCE_STATUS_PRESENT);
                     MarkAttendanceStudentAdapter.modelArrayList.get(pos).setStatus(Constants.ATTENDANCE_STATUS_PRESENT);
                     Map<String, String> map = new HashMap<String, String>();
-                    map.put("attendance_take_id", getArguments().getString("attend"));
+                    map.put("attendance_take_id", getArguments().getString("attend_takeid"));
                     map.put("status", Constants.ATTENDANCE_STATUS_PRESENT);
                     map.put("remarks", mEditTextRemarks.getText().toString());
                     Constants.markStudentAttendance(TAG, loginToken, map);
@@ -122,7 +123,7 @@ public class StudentInfoCardFragment extends Fragment {
                     mLayoutButtons.setVisibility(View.GONE);
                     //mMapStatus.put(getArguments().getString("attend"), Constants.ATTENDANCE_STATUS_ABSENT);
                     Map<String, String> map = new HashMap<String, String>();
-                    map.put("attendance_take_id", getArguments().getString("attend"));
+                    map.put("attendance_take_id", getArguments().getString("attend_takeid"));
                     map.put("status", Constants.ATTENDANCE_STATUS_ABSENT);
                     map.put("remarks", mEditTextRemarks.getText().toString());
                     Constants.markStudentAttendance(TAG, loginToken, map);

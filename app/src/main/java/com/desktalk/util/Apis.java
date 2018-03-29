@@ -49,9 +49,9 @@ public interface Apis {
     Call<JsonElement> getHistoryDates(
             @Header("token") String token, @Path("class_id") String Class_ID);
 
-    @POST("api/get_student_location/4")
+    @POST("api/get_student_location/6/{token}")
     Call<JsonElement> getStudentLocation(
-            @Header("token") String token);
+            @Header("token") String token,@Path("token") String token1);
 
     @POST("api/mark_attendance")
     @FormUrlEncoded
@@ -85,4 +85,7 @@ public interface Apis {
 
     @GET("api/delete_leavebyid/{leave_id}")
     Call<JsonElement> deleteLeaveById(@Header("token") String token,@Path("leave_id") String LeaveId);
+
+    @GET("api/get_studentperformance")
+    Call<JsonElement> getStudentPerformance(@Header("token") String token);
 }

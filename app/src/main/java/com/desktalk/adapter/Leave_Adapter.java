@@ -93,11 +93,12 @@ public class Leave_Adapter extends RecyclerView.Adapter<Leave_Adapter.MyViewHold
             if (Constants.USER_ID == Constants.USER_PARENT) {
                 leave_image_right.setVisibility(View.GONE);
                 leave_image_cross.setVisibility(View.GONE);
-                leave_image_delete.setVisibility(View.VISIBLE);
                 if (category.equals("Pending")) {
                     leave_image_edit.setVisibility(View.VISIBLE);
+                    leave_image_delete.setVisibility(View.VISIBLE);
                 } else {
                     leave_image_edit.setVisibility(View.GONE);
+                    leave_image_delete.setVisibility(View.GONE);
                 }
             } else if (Constants.USER_ID == Constants.USER_TEACHER) {
                 if (category.equals("Pending")) {
@@ -278,7 +279,7 @@ public class Leave_Adapter extends RecyclerView.Adapter<Leave_Adapter.MyViewHold
                 Log.i("edit", mDataset.get(position) + " Clicked_Edit");
                 if (Connectivity.isConnected(mContext)) {
                     PublicMethods.deleteLeave(mContext, TAG, loginToken, String.valueOf(mDataset.get(position).getLeave_id()));
-                    LeaveFragment.pendingLeavesList.remove(position);
+                    notifyDataSetChanged();
                 } else {
                     Toast.makeText(mContext, mContext.getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
                 }
@@ -299,8 +300,6 @@ public class Leave_Adapter extends RecyclerView.Adapter<Leave_Adapter.MyViewHold
                 LeaveFragment.pendingLeavesList.remove(position);
                 notifyDataSetChanged();
 */
-                LeaveFragment.getLeavesByClass(loginToken, classID, true, false);
-
             }
         });
         holder.leave_image_cross.setOnClickListener(new View.OnClickListener() {
@@ -323,72 +322,6 @@ public class Leave_Adapter extends RecyclerView.Adapter<Leave_Adapter.MyViewHold
     @Override
     public int getItemCount() {
         return mDataset.size();
-    }
-
-
-    private void getLeavesByClass(String token, String ClassID) {
-        LeaveFragment.pendingLeavesList = new ArrayList<LeaveDetailsModel>();
-        LeaveFragment.approvedList = new ArrayList<LeaveDetailsModel>();
-        LeaveFragment.rejectList = new ArrayList<LeaveDetailsModel>();
-
-        Gson gson = new GsonBuilder().setLenient().create();
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        OkHttpClient client = httpClient.build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        Apis mInterfaceService = retrofit.create(Apis.class);
-        Call<JsonElement> mService = mInterfaceService.getLeavesbyClass(token, ClassID);
-
-        final ArrayList<String> classes = new ArrayList<String>();
-        mService.enqueue(new Callback<JsonElement>() {
-            @Override
-            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
-                if (response.code() == 200) {
-
-                    if (response.body() != null) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response.body().toString());
-                            if (String.valueOf(jsonObject.get("status").toString()).contentEquals("success")) {
-                                JSONArray array = jsonObject.getJSONArray("response");
-                                for (int i = 0; i < array.length(); i++) {
-                                    Gson gson = new Gson();
-                                    LeaveDetailsModel leaveDetailsModel = gson.fromJson(array.getString(i), LeaveDetailsModel.class);
-                                    if (leaveDetailsModel.getStatus().contentEquals(Constants.LEAVE_STATUS_PENDING)) {
-                                        LeaveFragment.pendingLeavesList.add(leaveDetailsModel);
-                                    } else if (leaveDetailsModel.getStatus().contentEquals(Constants.LEAVE_STATUS_APPROVED)) {
-                                        LeaveFragment.approvedList.add(leaveDetailsModel);
-                                    } else {
-                                        LeaveFragment.rejectList.add(leaveDetailsModel);
-                                    }
-                                }
-                                notifyDataSetChanged();
-                            } else {
-
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, e.getMessage());
-                        }
-                    }
-                } else if (response.code() == 404) {
-
-                } else {
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonElement> call, Throwable t) {
-                Log.e(TAG, t.getMessage());
-            }
-        });
-    }
-
-    public interface update {
-        void update();
     }
 
     private void setDateTimeField(String fromDate, String toDate) {

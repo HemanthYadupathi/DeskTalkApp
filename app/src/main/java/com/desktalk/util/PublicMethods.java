@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.desktalk.Model.ClassDetailsModel;
+import com.desktalk.fragment.LeaveFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -58,6 +59,7 @@ public class PublicMethods {
                             if (String.valueOf(jsonObject.get("status").toString()).contentEquals("success")) {
                                 JSONArray array = jsonObject.getJSONArray("response");
                                 editor.putString(Constants.PREFERENCE_KEY_STUDENTLIST_JSON, String.valueOf(array));
+                                //TODO:Add to DB
                                 editor.commit();
                                 editor.apply();
                                 Log.d(TAG, "getStudentList " + String.valueOf(array));
@@ -83,7 +85,7 @@ public class PublicMethods {
         });
     }
 
-    public static void applyForLeave(final Context context, final String TAG, String token, HashMap<String, String> data) {
+    public static void applyForLeave(final Context context, final String TAG, final String token, HashMap<String, String> data) {
 
         Gson gson = new GsonBuilder().setLenient().create();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -105,6 +107,7 @@ public class PublicMethods {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().toString());
                             Log.d(TAG, "Leave response " + response.body().toString());
+                            LeaveFragment.getLeavesByClass(token, null, true);
                             Toast.makeText(context, "Leave applied successfully", Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
                             Log.e(TAG, e.getMessage());
@@ -124,7 +127,7 @@ public class PublicMethods {
         });
     }
 
-    public static void updateLeave(final Context context, final String TAG, String token, HashMap<String, String> data) {
+    public static void updateLeave(final Context context, final String TAG, final String token, HashMap<String, String> data) {
 
         Gson gson = new GsonBuilder().setLenient().create();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -146,6 +149,7 @@ public class PublicMethods {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().toString());
                             Log.d(TAG, "Leave response " + response.body().toString());
+                            LeaveFragment.getLeavesByClass(token, null, true);
                             Toast.makeText(context, "Leave updated successfully", Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
                             Log.e(TAG, e.getMessage());
@@ -165,7 +169,7 @@ public class PublicMethods {
         });
     }
 
-    public static void deleteLeave(final Context context, final String TAG, String token, final String leaveId) {
+    public static void deleteLeave(final Context context, final String TAG, final String token, final String leaveId) {
 
         Gson gson = new GsonBuilder().setLenient().create();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -187,6 +191,7 @@ public class PublicMethods {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().toString());
                             Log.d(TAG, "Leave response " + response.body().toString());
+                            LeaveFragment.getLeavesByClass(token, null, true);
                             Toast.makeText(context, "Leave deleted successfully", Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
                             Log.e(TAG, e.getMessage());

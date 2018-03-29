@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
 import com.desktalk.util.Apis;
+import com.desktalk.util.Config;
 import com.desktalk.util.Connectivity;
 import com.desktalk.util.Constants;
 import com.google.gson.Gson;
@@ -59,11 +60,9 @@ public class SplashActivity extends AppCompatActivity {
         if (sharedpreferences != null) {
             String username = sharedpreferences.getString(Constants.PREFERENCE_KEY_USER_NAME, "");
             String pwd = sharedpreferences.getString(Constants.PREFERENCE_KEY_USER_PWD, "");
-            String deviceToken = sharedpreferences.getString(Constants.PREFERENCE_KEY_DEVICE_TOKEN, "");
 
-            if (username != null && (!username.contentEquals("")) && pwd != null && (!pwd.contentEquals(""))
-                    && deviceToken != null && (!deviceToken.contentEquals(""))) {
-                Log.i(TAG, "USER Logged IN " + username + " " + deviceToken);
+            if (username != null && (!username.contentEquals("")) && pwd != null && (!pwd.contentEquals(""))) {
+                Log.i(TAG, "USER Logged IN " + username );
                 if (Connectivity.isConnected(getApplicationContext())) {
                     showProgress();
                     login(username, pwd);
@@ -122,13 +121,15 @@ public class SplashActivity extends AppCompatActivity {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        final String android_id = Settings.Secure.getString(SplashActivity.this.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+        /*final String android_id = Settings.Secure.getString(SplashActivity.this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);*/
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        Config.NOTIFICATION_REG_ID = pref.getString("regId","");
         Map<String, String> requestBodyMap = new HashMap<>();
 
         requestBodyMap.put("username", String.valueOf(user));
         requestBodyMap.put("password", String.valueOf(password));
-        requestBodyMap.put("devicetoken", android_id);
+        requestBodyMap.put("devicetoken", Config.NOTIFICATION_REG_ID);
 
         Apis mInterfaceService = retrofit.create(Apis.class);
         Call<JsonElement> mService = mInterfaceService.Authenticate(requestBodyMap);
@@ -149,7 +150,7 @@ public class SplashActivity extends AppCompatActivity {
                                     editor.putString(Constants.PREFERENCE_KEY_TOKEN, String.valueOf(jsonObject.getJSONObject("response").get("token")));
                                     editor.putString(Constants.PREFERENCE_KEY_USER_NAME, user);
                                     editor.putString(Constants.PREFERENCE_KEY_USER_PWD, password);
-                                    editor.putString(Constants.PREFERENCE_KEY_DEVICE_TOKEN, android_id);
+                                    editor.putString(Constants.PREFERENCE_KEY_DEVICE_TOKEN, Config.NOTIFICATION_REG_ID);
                                     editor.commit();
                                     editor.apply();
 

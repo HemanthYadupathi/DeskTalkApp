@@ -1,25 +1,26 @@
-package com.desktalk.activity;
+package com.desktalk.fragment;
+
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.activity.BusTrackMapActivity;
+import com.desktalk.activity.DashboardActivity;
 import com.desktalk.adapter.CustomInfoWindowAdapter;
 import com.desktalk.util.Apis;
 import com.desktalk.util.Connectivity;
@@ -34,8 +35,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.json.JSONObject;
 
@@ -46,175 +45,104 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class BusTrackMapActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private SharedPreferences mSharedPreferences;
     private Button mButtonReload;
     private TextView mTextViewLastUpdated;
-    private static final String TAG = BusTrackMapActivity.class.getSimpleName();
+    private static final String TAG = MapFragment.class.getSimpleName();
     private Handler mHandler;
     private final long updateLocationInterval = 5000;
-    private NavigationView navigationView;
+    private Runnable runnable;
+
+    public MapFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bus_track_map);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-// Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.app_bar_bus_track_map, container, false);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        mButtonReload = (Button) findViewById(R.id.buttonReload);
-        mTextViewLastUpdated = (TextView) findViewById(R.id.textLastUpdated);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_home);
-        View hView = navigationView.getHeaderView(0);
-
-        TextView nav_user = (TextView) hView.findViewById(R.id.text_name);
-        mSharedPreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE);
-        String userData = mSharedPreferences.getString(Constants.PREFERENCE_KEY_USERDATA, "");
-        if (!userData.contentEquals("") || userData != null) {
-            try {
-                JsonObject userDataObject = new JsonParser().parse(userData).getAsJsonObject();
-                nav_user.setText(userDataObject.get("fname").getAsString() + " " + userDataObject.get("lname").getAsString());
-
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
-        } else {
-            Log.e(TAG, "userData is null");
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
         }
+        Toolbar mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+
+        ((DashboardActivity) getActivity()).setToolbar(mToolbar, "Bus Tracking");
+
+        mButtonReload = (Button) rootView.findViewById(R.id.buttonReload);
+        mTextViewLastUpdated = (TextView) rootView.findViewById(R.id.textLastUpdated);
+        mSharedPreferences = getActivity().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE);
+
         final String token = mSharedPreferences.getString(Constants.PREFERENCE_KEY_TOKEN, "");
 
-        if (Connectivity.isConnected(getApplicationContext())) {
+        if (Connectivity.isConnected(getActivity())) {
             getUpdatedLocation(token);
         } else {
-            Toast.makeText(BusTrackMapActivity.this, getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
         }
 
         mButtonReload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Connectivity.isConnected(getApplicationContext())) {
+                if (Connectivity.isConnected(getActivity())) {
                     getUpdatedLocation(token);
                 } else {
-                    Toast.makeText(BusTrackMapActivity.this, getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         mHandler = new Handler();
-        Runnable runnable = new Runnable() {
+        runnable = new Runnable() {
 
             @Override
             public void run() {
                 Log.d(TAG, "Calling run");
-                if (Connectivity.isConnected(getApplicationContext())) {
+                if (Connectivity.isConnected(getActivity())) {
                     getUpdatedLocation(token);
                 } else {
-                    Toast.makeText(BusTrackMapActivity.this, getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
                 }
                 if (mHandler != null)
                     mHandler.postDelayed(this, updateLocationInterval);
             }
         };
         mHandler.postDelayed(runnable, updateLocationInterval);
+        return rootView;
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+    public void onDetach() {
+        super.onDetach();
+        Log.e(TAG, "onDetach");
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        navigationView.setCheckedItem(R.id.nav_home);
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
+        Log.e(TAG, "onDestroy");
         mHandler = null;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-       // getMenuInflater().inflate(R.menu.attendance_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            String token = mSharedPreferences.getString(Constants.PREFERENCE_KEY_TOKEN, "");
-            if (!token.contentEquals("") || token != null) {
-                if (Connectivity.isConnected(getApplicationContext())) {
-                    Constants.logout(BusTrackMapActivity.this, token);
-                } else {
-                    Log.d(TAG, getString(R.string.check_connection));
-                }
-            } else {
-                Log.d(TAG, "Token null");
-            }
-            Constants.clearSharedPreferenceData(mSharedPreferences, TAG);
-            finish();
-            Intent intent = new Intent(BusTrackMapActivity.this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_profile) {
-            startActivity(new Intent(BusTrackMapActivity.this, ProfileActivity.class));
-        }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    public void onStop() {
+        super.onStop();
+        Log.e(TAG, "onStop");
+        mHandler.removeCallbacks(runnable);
+        mHandler = null;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        /*LatLng defaultLoc = new LatLng(12.9319396, 77.613859);
-        mMap.addMarker(new MarkerOptions().position(defaultLoc).title("Current bus location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(defaultLoc));
-//        mMap.animateCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));*/
     }
 
     private void getUpdatedLocation(String token) {
@@ -230,7 +158,7 @@ public class BusTrackMapActivity extends AppCompatActivity
 
         Apis mInterfaceService = retrofit.create(Apis.class);
 
-        Call<JsonElement> mService = mInterfaceService.getStudentLocation(token,token);
+        Call<JsonElement> mService = mInterfaceService.getStudentLocation(token, token);
         mService.enqueue(new Callback<JsonElement>() {
             @Override
             public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
@@ -250,7 +178,7 @@ public class BusTrackMapActivity extends AppCompatActivity
                                         + jsonObjectResponse.get("fname").toString() + " " + jsonObjectResponse.get("lname").toString() + "\n");
 
                                 //Set Custom InfoWindow Adapter
-                                CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(BusTrackMapActivity.this);
+                                CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(getActivity());
                                 mMap.setInfoWindowAdapter(adapter);
                                 mMap.addMarker(marker).showInfoWindow();
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(defaultLoc));
@@ -267,12 +195,12 @@ public class BusTrackMapActivity extends AppCompatActivity
                     }
 
                 } else if (response.code() == 404) {
-                    Toast.makeText(BusTrackMapActivity.this, "Session expired, please login again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Session expired, please login again", Toast.LENGTH_SHORT).show();
                     mHandler = null;
-                    finish();
-                    Constants.startLogin(BusTrackMapActivity.this);
+                    getActivity().finish();
+                    Constants.startLogin(getActivity());
                 } else {
-                    Toast.makeText(BusTrackMapActivity.this, "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
                     LatLng defaultLoc = new LatLng(12.9319396, 77.613859);
                     mMap.addMarker(new MarkerOptions().position(defaultLoc).title("Current bus location"));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(defaultLoc));

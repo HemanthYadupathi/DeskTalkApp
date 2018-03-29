@@ -9,7 +9,7 @@ public class Config {
 
     // global topic to receive app wide push notifications
     public static final String TOPIC_GLOBAL = "global";
-    public static String ID = " ";
+    public static String NOTIFICATION_REG_ID = " ";
 //    private final String ID = " ";
 
     // broadcast receiver intent filters

@@ -1,6 +1,7 @@
 package com.desktalk.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,12 +9,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.activity.desktalkapp.R;
+import com.desktalk.Model.StudentPerformanceModel;
 import com.desktalk.adapter.CardFragmentPagerAdapter;
+import com.desktalk.util.Apis;
 import com.desktalk.util.Constants;
 import com.desktalk.util.ShadowTransformer;
 import com.desktalk.activity.DashboardActivity;
@@ -25,28 +32,31 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class HomeFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
+public class HomeFragment extends Fragment {
+
+    private static final String TAG = HomeFragment.class.getSimpleName();
+    private ArrayList<StudentPerformanceModel> studentPerformanceModels = new ArrayList<StudentPerformanceModel>();
+
     BarData data;
     private OnFragmentInteractionListener mListener;
 
@@ -54,38 +64,16 @@ public class HomeFragment extends Fragment {
     private ViewPager viewPager;
     private Timer timer;
     private int currentPage = 0;
-
+    private ProgressBar mProgressBarBehaviour, mProgressBarAcademic, mProgressBarExtra;
+    private TextView mTextViewBehaviour, mTextViewAcademic, mTextViewExtra;
+    private SharedPreferences sharedpreferences;
+    private CardView mCardViewPerformance;
+    private String token;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,6 +90,21 @@ public class HomeFragment extends Fragment {
         viewPager.setAdapter(pagerAdapter);
         viewPager.setPageTransformer(false, fragmentCardShadowTransformer);
         viewPager.setOffscreenPageLimit(3);
+
+        mProgressBarBehaviour = (ProgressBar) view.findViewById(R.id.circularProgressbar);
+        mProgressBarAcademic = (ProgressBar) view.findViewById(R.id.circularProgressbarAcd);
+        mProgressBarExtra = (ProgressBar) view.findViewById(R.id.circularProgressbarExtra);
+
+        mTextViewBehaviour = (TextView) view.findViewById(R.id.textBehValue);
+        mTextViewAcademic = (TextView) view.findViewById(R.id.textAcdValue);
+        mTextViewExtra = (TextView) view.findViewById(R.id.textExtraValue);
+
+        mCardViewPerformance = (CardView) view.findViewById(R.id.card_view_stdPerformance);
+
+        sharedpreferences = getActivity().getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, Context.MODE_PRIVATE); //1
+        token = sharedpreferences.getString(Constants.PREFERENCE_KEY_TOKEN, "");
+
+        getStudentPerformance(TAG, token);
 
         if (Constants.USER_ID == Constants.USER_TEACHER) {
             view.findViewById(R.id.card_view_timetable).setVisibility(View.GONE);
@@ -228,6 +231,69 @@ public class HomeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void getStudentPerformance(final String TAG, final String token) {
+
+        Gson gson = new GsonBuilder().setLenient().create();
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        OkHttpClient client = httpClient.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Apis mInterfaceService = retrofit.create(Apis.class);
+        Call<JsonElement> mService = mInterfaceService.getStudentPerformance(token);
+        mService.enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                if (response.code() == 200) {
+
+                    if (response.body() != null) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response.body().toString());
+                            if (String.valueOf(jsonObject.get("status").toString()).contentEquals("success")) {
+                                JSONArray jsonArray = jsonObject.getJSONArray("response");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    Gson gson = new Gson();
+                                    StudentPerformanceModel studentPerformanceModel = gson.fromJson(jsonArray.getString(i), StudentPerformanceModel.class);
+                                    studentPerformanceModels.add(studentPerformanceModel);
+                                    mCardViewPerformance.setVisibility(View.VISIBLE);
+                                }
+                                if (studentPerformanceModels.size() != 0) {
+                                    mProgressBarBehaviour.setProgress(Integer.valueOf(studentPerformanceModels.get(0).getClass_behavior()));
+                                    mProgressBarAcademic.setProgress(Integer.valueOf(studentPerformanceModels.get(0).getAcademic_performance()));
+                                    mProgressBarExtra.setProgress(Integer.valueOf(studentPerformanceModels.get(0).getExtra_curricular_activities()));
+
+                                    mTextViewBehaviour.setText(studentPerformanceModels.get(0).getClass_behavior() + "%");
+                                    mTextViewAcademic.setText(studentPerformanceModels.get(0).getAcademic_performance() + "%");
+                                    mTextViewExtra.setText(studentPerformanceModels.get(0).getExtra_curricular_activities() + "%");
+                                } else {
+                                    mCardViewPerformance.setVisibility(View.GONE);
+                                }
+                                Log.d(TAG, "Student performance response " + response.body().toString());
+                            } else {
+                                mCardViewPerformance.setVisibility(View.GONE);
+                            }
+
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                } else if (response.code() == 404) {
+                    Log.e(TAG, "Session expired, please login again");
+                } else {
+                    Log.e(TAG, "Something went wrong, please login again");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonElement> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+            }
+        });
     }
 
     /**

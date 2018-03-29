@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -110,7 +112,7 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_profile, container, false);
         mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
 
-        ((DashboardActivity) getActivity()).setToolbar(mToolbar, "Fannie Hunt");
+        //((DashboardActivity) getActivity()).setToolbar(mToolbar, "Fannie Hunt");
 
         View v = rootView.findViewById(R.id.id_content);
 
@@ -223,6 +225,16 @@ public class ProfileFragment extends Fragment {
         Gson gson = new Gson();
         UserDataModel userData = gson.fromJson(data, UserDataModel.class);
 
+        if (!userData.getFname().toString().contentEquals("") || !userData.getLname().toString().contentEquals("")) {
+            ((DashboardActivity) getActivity()).setToolbar(mToolbar, userData.getFname().toString() + " " + userData.getLname().toString());
+            /*setSupportActionBar(toolbar);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();*/
+        }
+
         if (!userData.getFather_name().toString().contentEquals("")) {
             prof_Fname.setText(userData.getFather_name().toString());
         } else {
@@ -269,6 +281,7 @@ public class ProfileFragment extends Fragment {
             //rootView.findViewById(R.id.card_view_description).setVisibility(View.GONE);
         }
     }
+
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -304,6 +317,7 @@ public class ProfileFragment extends Fragment {
             mProfileForm.setVisibility(show ? View.GONE : View.VISIBLE);
         }*/
     }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

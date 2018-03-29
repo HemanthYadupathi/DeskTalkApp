@@ -56,8 +56,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    ProgressDialog progressDialog;
-
     private SharedPreferences sharedpreferences;
     private Editor editor;
     private static ProgressDialog authDialog;
@@ -67,10 +65,8 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private TextView mTextViewForgotPwd;
-    private Snackbar snackbar;
     private final String TAG = LoginActivity.class.getSimpleName();
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-    RelativeLayout main_actvity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +78,6 @@ public class LoginActivity extends AppCompatActivity {
         mTextViewForgotPwd = (TextView) findViewById(R.id.textForgotPwd);
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        main_actvity = (RelativeLayout) findViewById(R.id.activity_login);
         sharedpreferences = getApplicationContext().getSharedPreferences(Constants.PREFERENCE_LOGIN_DETAILS, 0); //1
         editor = sharedpreferences.edit();
 
@@ -186,13 +181,15 @@ public class LoginActivity extends AppCompatActivity {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        final String android_id = Settings.Secure.getString(LoginActivity.this.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+        /*final String android_id = Settings.Secure.getString(LoginActivity.this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);*/
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        Config.NOTIFICATION_REG_ID = pref.getString("regId","");
         Map<String, String> requestBodyMap = new HashMap<>();
 
         requestBodyMap.put("username", String.valueOf(user));
         requestBodyMap.put("password", String.valueOf(password));
-        requestBodyMap.put("devicetoken", android_id);
+        requestBodyMap.put("devicetoken", Config.NOTIFICATION_REG_ID);
 
         Apis mInterfaceService = retrofit.create(Apis.class);
         Call<JsonElement> mService = mInterfaceService.Authenticate(requestBodyMap);
@@ -214,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                                     editor.putString(Constants.PREFERENCE_KEY_TOKEN, String.valueOf(jsonObject.getJSONObject("response").get("token")));
                                     editor.putString(Constants.PREFERENCE_KEY_USER_NAME, user);
                                     editor.putString(Constants.PREFERENCE_KEY_USER_PWD, password);
-                                    editor.putString(Constants.PREFERENCE_KEY_DEVICE_TOKEN, android_id);
+                                    editor.putString(Constants.PREFERENCE_KEY_DEVICE_TOKEN, Config.NOTIFICATION_REG_ID);
                                     editor.commit();
                                     editor.apply();
 
@@ -230,28 +227,6 @@ public class LoginActivity extends AppCompatActivity {
                                     finish();
                                     Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                                     startActivity(intent);
-                                    Log.e("ID",Config.ID);
-                                    mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-                                        @Override
-                                        public void onReceive(Context context, Intent intent) {
-
-                                            // checking for type intent filter
-                                            if (intent != null) {
-                                                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-                                                    // gcm successfully registered
-                                                    // now subscribe to `global` topic to receive app wide notifications
-                                                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
-
-                                                    displayFirebaseRegId();
-
-                                                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-
-                                                }
-                                            } else {
-                                                Toast.makeText(context, "Intent is null", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    };
 
                                     /*if (Constants.USER_ID == Constants.USER_ATTENDER || Constants.USER_ID == Constants.USER_TEACHER) {
                                         Intent intent = new Intent(LoginActivity.this, AttendanceMainActivity.class);
@@ -325,55 +300,5 @@ public class LoginActivity extends AppCompatActivity {
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-
-    private void displayFirebaseRegId() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
-        String regId = pref.getString("regId", null);
-
-        Log.e(TAG, "Firebase reg id: " + regId);
-        if (Connectivity.isConnected(LoginActivity.this)) {
-            if (!TextUtils.isEmpty(regId)) {
-//                regid.setText("Device Registered");
-//                regid.setTextColor(getResources().getColor(R.color.colorPrimary));
-                dismissDialog();
-            } else {
-//                regid.setText("Device not Yet Registered!");
-//                regid.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-                Toast.makeText(getApplicationContext(), "Registering", Toast.LENGTH_SHORT).show();
-                authDialog = createAuthDialog(LoginActivity.this);
-                authDialog.show();
-            }
-        } else {
-            dismissDialog();
-            snackbar.make(main_actvity, "Lost Internet Connection", Snackbar.LENGTH_LONG).show();
-        }
-    }
-
-    public static void dismissDialog() {
-        if (authDialog != null) {
-            try {
-                authDialog.dismiss();
-            } catch (Exception e) {
-            }
-        }
-    }
-    private ProgressDialog createAuthDialog(Context context) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMessage("Registering");
-        progressDialog.setCancelable(false);
-        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-                cancelSendTask();
-            }
-
-            private void cancelSendTask() {
-                //    Log.i(Setting_actvity.TAG, "Cancel Authenticated task!!");
-            }
-        });
-
-        return progressDialog;
-    }
-
 }
 

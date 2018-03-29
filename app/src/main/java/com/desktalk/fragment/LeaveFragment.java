@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,11 +97,12 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
     private static ViewPager viewPager;
     static ViewPagerAdapter adapter;
     static TabLayout tabLayout;
-    private static String token, mSelectedClass;
+    public static String token, mSelectedClass;
     private AlertDialog alertDialog;
     private ArrayList<String> mArrayListStudentList = new ArrayList<String>();
     private ArrayList<StudentListModel> arrayStudentListModel = new ArrayList<StudentListModel>();
-    ;
+    private static ProgressBar mProgressBar;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -115,7 +117,7 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
 
         ((DashboardActivity) getActivity()).setToolbar(mToolbar, "Leave Application");
         mSpinnerClass = (Spinner) rootView.findViewById(R.id.spinner_class);
-
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressbar);
         viewPager = (ViewPager) rootView.findViewById(R.id.leave_viewpager);
         adapter = new ViewPagerAdapter(getChildFragmentManager());
         tabLayout = (TabLayout) rootView.findViewById(R.id.tablayout);
@@ -169,7 +171,7 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
             if ((!token.contentEquals("") || token != null) && (!UID.contentEquals("") || UID != null)) {
 
                 if (Connectivity.isConnected(getActivity())) {
-                    getLeavesByClass(token, null, false, true);
+                    getLeavesByClass(token, null, true);
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
                 }
@@ -182,7 +184,7 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 final AlertDialog.Builder dialodView = new AlertDialog.Builder(getActivity());
-                View dialog = getActivity().getLayoutInflater().inflate(R.layout.apply_leave, null);
+                final View dialog = getActivity().getLayoutInflater().inflate(R.layout.apply_leave, null);
                 dialodView.setView(dialog);
                 alertDialog = dialodView.create();
                 alertDialog.show();
@@ -239,6 +241,7 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
                             hashMap.put("reason", editTextReason.getText().toString());
                             hashMap.put("from_date", Start_Date.getText().toString());
                             hashMap.put("to_date", End_Date.getText().toString());
+                            alertDialog.dismiss();
                             if (Connectivity.isConnected(getActivity())) {
                                 PublicMethods.applyForLeave(getActivity(), TAG, token, hashMap);
                             } else {
@@ -317,7 +320,7 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setDateTimeField() {
-        dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        dateFormatter = new SimpleDateFormat("yyyy-MMM-dd", Locale.US);
         start_date_picker.setOnClickListener(this);
         end_date_picker.setOnClickListener(this);
         Start_Date.setOnClickListener(this);
@@ -390,7 +393,7 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
                                 mSpinnerClass.setAdapter(spinnerArrayAdapter);
                                 Log.d(TAG, "Class : " + classes.toString());
                                 mSelectedClass = modelArrayList.get(mSpinnerClass.getSelectedItemPosition()).getClass_id();
-                                getLeavesByClass(token, mSelectedClass, false, false);
+                                getLeavesByClass(token, mSelectedClass, false);
                             } else {
                                 //showProgress(false);
                                 Toast.makeText(getActivity(), "Something went wrong !!", Toast.LENGTH_SHORT).show();
@@ -416,7 +419,11 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    public static void getLeavesByClass(String token, String ClassID, final boolean fromAdapter, final boolean isFroParent) {
+    public static void getLeavesByClass(String token, String ClassID, final boolean isFroParent) {
+        showProgress(true);
+        pendingLeavesList.clear();
+        approvedList.clear();
+        rejectList.clear();
         pendingLeavesList = new ArrayList<LeaveDetailsModel>();
         approvedList = new ArrayList<LeaveDetailsModel>();
         rejectList = new ArrayList<LeaveDetailsModel>();
@@ -442,7 +449,7 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
                 if (response.code() == 200) {
-
+                    showProgress(false);
                     if (response.body() != null) {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().toString());
@@ -459,36 +466,38 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
                                         rejectList.add(leaveDetailsModel);
                                     }
                                 }
-                                if (!fromAdapter)
-                                    setFragments();
-                                else {
-//                                    adapter.notifyDataSetChanged();
-//                                    viewPager.invalidate();
-                                    setFragments();
-                                }
+
+                                adapter.notifyDataSetChanged();
+                                viewPager.invalidate();
+                                //setFragments();
 
 
                             } else {
                                 //showProgress(false);
-                                //Toast.makeText(getActivity(), "Something went wrong !!", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity(), "Something went wrong !!", Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
                             Log.e(TAG, e.getMessage());
                         }
                     }
                 } else if (response.code() == 404) {
+                    showProgress(false);
                     //Toast.makeText(getActivity(), "Session expired, please login again", Toast.LENGTH_SHORT).show();
                     //getActivity().finish();
-                    //Constants.startLogin(getActivity());
+//                    Constants.startLogin(getActivity());
                 } else {
+                    showProgress(false);
                     //showProgress(false);
                     //Toast.makeText(getActivity(), "Something went wrong, please login again", Toast.LENGTH_SHORT).show();
                 }
+                setFragments();
             }
 
             @Override
             public void onFailure(Call<JsonElement> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
+                showProgress(false);
+                setFragments();
             }
         });
     }
@@ -588,6 +597,17 @@ public class LeaveFragment extends Fragment implements View.OnClickListener {
             Log.d(TAG, "getStudentList Exception " + e.getMessage());
             return null;
         }
+    }
+
+    private static void showProgress(boolean status) {
+        if (status) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            viewPager.setVisibility(View.GONE);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            viewPager.setVisibility(View.VISIBLE);
+        }
 
     }
+
 }

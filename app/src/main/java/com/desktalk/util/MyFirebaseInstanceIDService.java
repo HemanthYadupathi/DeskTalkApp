@@ -34,7 +34,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     private void sendRegistrationToServer(final String token) {
         // sending gcm token to server
         Log.e(TAG, "sendRegistrationToServer: " + token);
-        Config.ID=token;
+        Config.NOTIFICATION_REG_ID = token;
     }
 
     private void storeRegIdInPref(String token) {
@@ -43,6 +43,6 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         editor.putString("regId", token);
         editor.commit();
     }
-    
+
 }
 
